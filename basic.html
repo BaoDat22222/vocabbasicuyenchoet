@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flashcard Vocabulary</title>
+<title>uyên choẹt app</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -29,26 +29,59 @@
         color: var(--ink);
         background: var(--cream);
         overflow-x: hidden;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
     }
     h1, h2, h3, .brand, .card-word, .quiz-q { font-family: 'Baloo 2', sans-serif; }
 
-    /* ---------- Decorative background ---------- */
-    .bg-deco { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+    /* ---------- Decorative background (improved) ---------- */
+    .bg-deco { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
     .blob {
         position: absolute;
         border-radius: 50%;
-        opacity: .35;
-        filter: blur(2px);
+        opacity: .36;
+        filter: blur(6px);
+        will-change: transform, opacity, filter;
     }
-    .blob.b1 { width: 420px; height: 420px; top: -140px; left: -120px; background: radial-gradient(circle at 35% 30%, #ffd7a8, #ffb648 75%); }
-    .blob.b2 { width: 380px; height: 380px; bottom: -160px; right: -100px; background: radial-gradient(circle at 35% 30%, #b9f3ea, #16b8a6 75%); opacity: .3; }
-    .blob.b3 { width: 240px; height: 240px; top: 30%; right: 6%; background: radial-gradient(circle at 35% 30%, #ffc9c3, #ff6b5e 75%); opacity: .25; }
-    .blob.b4 { width: 180px; height: 180px; bottom: 12%; left: 8%; background: radial-gradient(circle at 35% 30%, #d9d0ff, #8e7cff 75%); opacity: .28; }
+    .blob.b1 { width: 520px; height: 520px; top: -200px; left: -160px; background: radial-gradient(circle at 35% 30%, #ffd7a8, #ffb648 75%); animation: float1 18s ease-in-out infinite alternate; }
+    .blob.b2 { width: 460px; height: 460px; bottom: -200px; right: -140px; background: radial-gradient(circle at 35% 30%, #b9f3ea, #16b8a6 75%); opacity: .32; animation: float2 22s ease-in-out infinite alternate; }
+    .blob.b3 { width: 300px; height: 300px; top: 28%; right: 6%; background: radial-gradient(circle at 35% 30%, #ffc9c3, #ff6b5e 75%); opacity: .28; animation: float3 16s ease-in-out infinite alternate; }
+    .blob.b4 { width: 220px; height: 220px; bottom: 8%; left: 6%; background: radial-gradient(circle at 35% 30%, #d9d0ff, #8e7cff 75%); opacity: .3; animation: float4 20s ease-in-out infinite alternate; }
     .dots {
         position: absolute; inset: 0;
-        background-image: radial-gradient(rgba(44,39,64,.08) 1.5px, transparent 1.5px);
-        background-size: 26px 26px;
+        background-image: radial-gradient(rgba(44,39,64,.06) 1.5px, transparent 1.5px);
+        background-size: 28px 28px;
         mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 0%, transparent 70%);
+        opacity: .85;
+        animation: moveDots 30s linear infinite;
+        will-change: background-position, opacity;
+    }
+
+    @keyframes float1 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(24px, -18px, 0) rotate(6deg); }
+    }
+    @keyframes float2 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(-28px, 12px, 0) rotate(-7deg); }
+    }
+    @keyframes float3 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(16px, 22px, 0) rotate(4deg); }
+    }
+    @keyframes float4 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(-12px, -20px, 0) rotate(-5deg); }
+    }
+    @keyframes moveDots {
+        0% { background-position: 0 0; }
+        100% { background-position: 160px 120px; }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .blob, .dots { animation: none !important; }
+        .flip-inner { transition: none !important; }
     }
 
     .wrap { max-width: 920px; margin: 0 auto; padding: 34px 20px 70px; position: relative; }
@@ -91,33 +124,19 @@
         box-shadow: var(--shadow);
         border: 1px solid rgba(44,39,64,.05);
         cursor: pointer;
-        transition: transform .2s, box-shadow .2s;
+        transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;
         overflow: hidden;
     }
-    .topic-card:hover { transform: translateY(-5px); }
+    .topic-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 26px 60px -28px rgba(44,39,64,.28); }
     .topic-card .emoji {
         width: 50px; height: 50px; border-radius: 16px;
         display: flex; align-items: center; justify-content: center;
         font-size: 1.5rem; margin-bottom: 14px;
+        transition: transform .28s;
     }
+    .topic-card:hover .emoji { transform: translateY(-6px) rotate(-6deg); }
     .topic-card h3 { margin: 0 0 4px; font-size: 1.08rem; }
     .topic-card .sub { color: var(--ink-soft); font-size: .84rem; margin: 0; }
-    .topic-card.active .emoji { background: linear-gradient(135deg, var(--coral), var(--sun)); color: #fff; }
-    .topic-card.locked { cursor: not-allowed; opacity: .72; }
-    .topic-card.locked .emoji { background: #f1eee7; color: #9b93ab; }
-    .badge-soon {
-        position: absolute; top: 14px; right: 14px;
-        background: #f1eee7; color: var(--ink-soft);
-        font-size: .66rem; font-weight: 800; letter-spacing: .02em;
-        padding: 4px 9px; border-radius: 999px;
-    }
-    .badge-live {
-        position: absolute; top: 14px; right: 14px;
-        background: linear-gradient(120deg, var(--teal), var(--teal-dark));
-        color: #fff; font-size: .66rem; font-weight: 800;
-        padding: 4px 10px; border-radius: 999px;
-        box-shadow: 0 6px 14px -6px rgba(15,143,129,.6);
-    }
 
     /* ---------- Views ---------- */
     .view { display: none; }
@@ -156,7 +175,7 @@
     .fc-progress { font-weight: 800; color: var(--ink-soft); font-size: .9rem; }
     .flip-card {
         width: 100%; max-width: 460px; height: 300px;
-        perspective: 1400px; cursor: pointer;
+        perspective: 1400px; cursor: pointer; will-change: transform;
     }
     .flip-inner {
         position: relative; width: 100%; height: 100%;
@@ -171,10 +190,11 @@
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         padding: 30px; text-align: center;
         box-shadow: var(--shadow);
+        transition: box-shadow .2s, transform .2s;
     }
     .face-front { background: linear-gradient(155deg, #ffffff, #fff5ea); border: 1px solid rgba(44,39,64,.06); }
     .face-back { background: linear-gradient(155deg, var(--teal), #0f9b8c); color: #fff; transform: rotateY(180deg); }
-    .card-word { font-size: 2.1rem; font-weight: 700; margin: 0 0 6px; }
+    .card-word { font-size: 2.1rem; font-weight: 700; margin: 0 0 6px; will-change: transform, opacity; }
     .card-ipa { color: var(--ink-soft); font-size: 1rem; margin: 0 0 4px; }
     .card-pos { display: inline-block; background: #f1eee7; color: var(--ink-soft); font-size: .74rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; margin-bottom: 14px; }
     .speak-btn {
@@ -185,9 +205,16 @@
     }
     .speak-btn:hover { transform: scale(1.08); }
     .face-front .hint { margin-top: 16px; font-size: .78rem; color: var(--ink-soft); opacity: .8; }
-    .card-meaning { font-size: 1.5rem; font-weight: 800; margin: 0 0 14px; }
+    .card-meaning { font-size: 1.5rem; font-weight: 800; margin: 0 0 14px; will-change: transform, opacity; }
     .card-ex { font-size: .88rem; line-height: 1.5; opacity: .95; margin: 4px 0; text-align: left; }
     .card-ex b { opacity: .8; }
+
+    /* small pop animation for card text when it changes */
+    .pop { animation: pop .34s cubic-bezier(.2,.9,.3,1) both; }
+    @keyframes pop {
+        from { transform: translateY(6px) scale(.995); opacity: 0; }
+        to { transform: none; opacity: 1; }
+    }
 
     .fc-nav { display: flex; align-items: center; gap: 14px; }
     .nav-btn {
@@ -265,7 +292,7 @@
 
 <div class="wrap">
     <div class="top-bar">
-        <div class="brand"><span class="brand-badge">🃏</span> Flashcard Vocab</div>
+        <div class="brand"><span class="brand-badge">🃏</span> uyên choẹt app</div>
         <button class="back-btn" id="backBtn">← Chủ đề khác</button>
     </div>
 
@@ -546,6 +573,7 @@ function switchMode(mode) {
 
 /* ================= FLASHCARD ================= */
 const flipCard = document.getElementById('flipCard');
+const flipInner = flipCard.querySelector('.flip-inner');
 const cardWord = document.getElementById('cardWord');
 const cardIpa = document.getElementById('cardIpa');
 const cardPos = document.getElementById('cardPos');
@@ -558,6 +586,8 @@ function renderCard() {
     if (fcList.length === 0) return;
     const item = fcList[fcIndex];
     flipCard.classList.remove('flipped');
+
+    // update content
     cardWord.textContent = item.word;
     cardIpa.textContent = item.ipa;
     cardPos.textContent = item.pos;
@@ -567,6 +597,14 @@ function renderCard() {
     fcProgress.textContent = (fcIndex + 1) + ' / ' + fcList.length;
     document.getElementById('prevBtn').disabled = fcIndex === 0;
     document.getElementById('nextBtn').disabled = fcIndex === fcList.length - 1;
+
+    // subtle pop animation on text so changes feel smoother
+    [cardWord, cardMeaning].forEach(el => {
+        el.classList.remove('pop');
+        // force reflow
+        void el.offsetWidth;
+        el.classList.add('pop');
+    });
 }
 
 flipCard.addEventListener('click', () => flipCard.classList.toggle('flipped'));
