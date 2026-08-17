@@ -3,461 +3,315 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flashcard Premium · 10 chủ đề</title>
+<title>uyên choẹt app</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-    /* ========== GIỐNG NHƯ CODE GỐC, KHÔNG THAY ĐỔI ========== */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+        --cream: #fff8ef;
+        --cream2: #fff1de;
+        --coral: #ff6b5e;
+        --coral-dark: #e6503f;
+        --teal: #16b8a6;
+        --teal-dark: #0f8f81;
+        --sun: #ffb648;
+        --violet: #8e7cff;
+        --ink: #2c2740;
+        --ink-soft: #6b6580;
+        --card: #ffffff;
+        --shadow: 0 18px 40px -18px rgba(44, 39, 64, .25);
+    }
+    * { box-sizing: border-box; }
     body {
-        font-family: 'Nunito', sans-serif;
+        margin: 0;
         min-height: 100vh;
+        font-family: 'Nunito', sans-serif;
+        color: var(--ink);
+        background: var(--cream);
         overflow-x: hidden;
-        transition: background .9s ease, color .9s ease;
-        background: #f0ebe3;
-        color: #1e1a2b;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
     }
     h1, h2, h3, .brand, .card-word, .quiz-q { font-family: 'Baloo 2', sans-serif; }
 
-    body.theme-spring {
-        --bg1: #fce4ec; --bg2: #f3d9e8; --bg3: #fbe9e7;
-        --accent: #e8436e; --accent2: #f8a5b5; --accent3: #a29bfe;
-        --card-bg: rgba(255,255,255,.78);
-        --text: #2d1b2e; --text-soft: #7a5a7a;
-        --shadow: 0 20px 50px -20px rgba(180,70,120,.35);
-        --glow: 0 0 60px rgba(232,67,110,.12);
+    /* ---------- Decorative background (improved) ---------- */
+    .bg-deco { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        opacity: .36;
+        filter: blur(6px);
+        will-change: transform, opacity, filter;
     }
-    body.theme-ocean {
-        --bg1: #d4eaf7; --bg2: #b8dae6; --bg3: #c5e8f0;
-        --accent: #0f9b8c; --accent2: #4fc3d0; --accent3: #1a7a8a;
-        --card-bg: rgba(255,255,255,.82);
-        --text: #0d3340; --text-soft: #4a7a8a;
-        --shadow: 0 20px 50px -20px rgba(15,155,140,.35);
-        --glow: 0 0 60px rgba(15,155,140,.15);
-    }
-    body.theme-midnight {
-        --bg1: #1a1a2e; --bg2: #16213e; --bg3: #0f3460;
-        --accent: #a29bfe; --accent2: #6c5ce7; --accent3: #fd79a8;
-        --card-bg: rgba(30,30,60,.82);
-        --text: #eee8f5; --text-soft: #a89cc0;
-        --shadow: 0 20px 50px -20px rgba(100,80,200,.4);
-        --glow: 0 0 80px rgba(162,155,254,.12);
-    }
-    body.theme-forest {
-        --bg1: #e8f0e3; --bg2: #d4e0cc; --bg3: #dce8d4;
-        --accent: #2d7d4f; --accent2: #7cb083; --accent3: #c4a87a;
-        --card-bg: rgba(255,255,255,.80);
-        --text: #1e3324; --text-soft: #5a7a5a;
-        --shadow: 0 20px 50px -20px rgba(45,125,79,.3);
-        --glow: 0 0 60px rgba(45,125,79,.10);
+    .blob.b1 { width: 520px; height: 520px; top: -200px; left: -160px; background: radial-gradient(circle at 35% 30%, #ffd7a8, #ffb648 75%); animation: float1 18s ease-in-out infinite alternate; }
+    .blob.b2 { width: 460px; height: 460px; bottom: -200px; right: -140px; background: radial-gradient(circle at 35% 30%, #b9f3ea, #16b8a6 75%); opacity: .32; animation: float2 22s ease-in-out infinite alternate; }
+    .blob.b3 { width: 300px; height: 300px; top: 28%; right: 6%; background: radial-gradient(circle at 35% 30%, #ffc9c3, #ff6b5e 75%); opacity: .28; animation: float3 16s ease-in-out infinite alternate; }
+    .blob.b4 { width: 220px; height: 220px; bottom: 8%; left: 6%; background: radial-gradient(circle at 35% 30%, #d9d0ff, #8e7cff 75%); opacity: .3; animation: float4 20s ease-in-out infinite alternate; }
+    .dots {
+        position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(44,39,64,.06) 1.5px, transparent 1.5px);
+        background-size: 28px 28px;
+        mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 0%, transparent 70%);
+        opacity: .85;
+        animation: moveDots 30s linear infinite;
+        will-change: background-position, opacity;
     }
 
-    #bgCanvas {
-        position: fixed; inset: 0; z-index: 0;
-        width: 100%; height: 100%;
-        pointer-events: none;
-        transition: opacity 1.2s ease;
+    @keyframes float1 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(24px, -18px, 0) rotate(6deg); }
     }
-    .bg-overlay {
-        position: fixed; inset: 0; z-index: 1;
-        pointer-events: none;
-        background: radial-gradient(ellipse 80% 60% at 20% 20%, rgba(255,255,255,.08) 0%, transparent 60%),
-                    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,255,255,.06) 0%, transparent 50%);
-        mix-blend-mode: overlay;
+    @keyframes float2 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(-28px, 12px, 0) rotate(-7deg); }
+    }
+    @keyframes float3 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(16px, 22px, 0) rotate(4deg); }
+    }
+    @keyframes float4 {
+        from { transform: translate3d(0,0,0) rotate(0deg); }
+        to { transform: translate3d(-12px, -20px, 0) rotate(-5deg); }
+    }
+    @keyframes moveDots {
+        0% { background-position: 0 0; }
+        100% { background-position: 160px 120px; }
     }
 
-    .wrap {
-        position: relative; z-index: 2;
-        max-width: 960px; margin: 0 auto;
-        padding: 24px 20px 70px;
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .blob, .dots { animation: none !important; }
+        .flip-inner { transition: none !important; }
     }
 
-    .top-bar {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
-    }
-    .brand {
-        display: flex; align-items: center; gap: 10px;
-        font-size: 1.3rem; font-weight: 800; color: var(--text);
-    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 34px 20px 70px; position: relative; }
+
+    /* ---------- Header ---------- */
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.35rem; font-weight: 700; color: var(--ink); }
     .brand-badge {
-        width: 42px; height: 42px; border-radius: 14px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        width: 40px; height: 40px; border-radius: 12px;
+        background: linear-gradient(135deg, var(--coral), var(--sun));
         display: flex; align-items: center; justify-content: center;
-        font-size: 1.3rem; color: #fff;
-        box-shadow: var(--shadow);
-    }
-    .top-actions {
-        display: flex; align-items: center; gap: 10px;
-    }
-    .theme-toggle {
-        position: relative;
-        border: none; background: var(--card-bg);
-        backdrop-filter: blur(12px);
-        padding: 8px 14px; border-radius: 999px;
-        font-size: .82rem; font-weight: 700; color: var(--text);
-        cursor: pointer;
-        box-shadow: var(--shadow);
-        transition: transform .2s;
-        display: flex; align-items: center; gap: 6px;
-        font-family: 'Nunito', sans-serif;
-    }
-    .theme-toggle:hover { transform: translateY(-2px); }
-    .theme-toggle .dot {
-        display: inline-block; width: 16px; height: 16px; border-radius: 50%;
-        border: 2px solid rgba(255,255,255,.6);
-        transition: all .4s;
+        font-size: 1.2rem; box-shadow: var(--shadow);
     }
     .back-btn {
-        display: none; align-items: center; gap: 6px;
-        border: none; background: var(--card-bg); backdrop-filter: blur(12px);
-        color: var(--text); padding: 10px 18px; border-radius: 999px;
-        font-weight: 700; font-family: 'Nunito', sans-serif;
-        cursor: pointer; box-shadow: var(--shadow);
+        display: none;
+        align-items: center; gap: 6px;
+        border: none; background: var(--card); color: var(--ink);
+        padding: 10px 16px; border-radius: 999px; font-weight: 700;
+        font-family: 'Nunito', sans-serif; cursor: pointer; box-shadow: var(--shadow);
         transition: transform .15s;
     }
     .back-btn:hover { transform: translateY(-2px); }
 
-    .hero { text-align: center; margin-bottom: 34px; }
-    .hero h1 {
-        font-size: clamp(1.8rem, 4.5vw, 2.6rem);
-        margin: 0 0 10px; color: var(--text);
-    }
-    .hero p { color: var(--text-soft); font-size: 1.04rem; margin: 0; }
+    /* ---------- Home / topic grid ---------- */
+    .hero { text-align: center; margin-bottom: 30px; }
+    .hero h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); margin: 0 0 10px; }
+    .hero p { color: var(--ink-soft); font-size: 1.02rem; margin: 0; }
 
     .topic-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
     }
     .topic-card {
         position: relative;
-        background: var(--card-bg); backdrop-filter: blur(12px);
-        border-radius: 24px; padding: 24px 18px;
+        background: var(--card);
+        border-radius: 22px;
+        padding: 22px 18px;
         text-align: left;
-        box-shadow: var(--shadow), var(--glow);
-        border: 1px solid rgba(255,255,255,.3);
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(44,39,64,.05);
         cursor: pointer;
-        transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+        transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;
         overflow: hidden;
     }
-    .topic-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow), 0 0 60px rgba(255,255,255,.08); }
+    .topic-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 26px 60px -28px rgba(44,39,64,.28); }
     .topic-card .emoji {
-        width: 52px; height: 52px; border-radius: 18px;
+        width: 50px; height: 50px; border-radius: 16px;
         display: flex; align-items: center; justify-content: center;
-        font-size: 1.6rem; margin-bottom: 14px;
-        background: rgba(255,255,255,.5);
+        font-size: 1.5rem; margin-bottom: 14px;
+        transition: transform .28s;
     }
-    .topic-card h3 { margin: 0 0 4px; font-size: 1.08rem; color: var(--text); }
-    .topic-card .sub { color: var(--text-soft); font-size: .84rem; margin: 0; }
-    .topic-card.active .emoji { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
-    .topic-card.locked { cursor: not-allowed; opacity: .6; }
-    .topic-card.locked .emoji { background: rgba(0,0,0,.08); color: var(--text-soft); }
+    .topic-card:hover .emoji { transform: translateY(-6px) rotate(-6deg); }
+    .topic-card h3 { margin: 0 0 4px; font-size: 1.08rem; }
+    .topic-card .sub { color: var(--ink-soft); font-size: .84rem; margin: 0; }
 
-    .badge-soon {
-        position: absolute; top: 14px; right: 14px;
-        background: rgba(0,0,0,.08); color: var(--text-soft);
-        font-size: .62rem; font-weight: 800; letter-spacing: .04em;
-        padding: 4px 10px; border-radius: 999px;
-        backdrop-filter: blur(4px);
-    }
-    .badge-live {
-        position: absolute; top: 14px; right: 14px;
-        background: linear-gradient(120deg, var(--accent), var(--accent2));
-        color: #fff; font-size: .62rem; font-weight: 800;
-        padding: 4px 10px; border-radius: 999px;
-        box-shadow: 0 8px 20px -8px rgba(0,0,0,.3);
-    }
-
-    .view { display: none; animation: fadeUp .5s cubic-bezier(.22,1,.36,1) both; }
+    /* ---------- Views ---------- */
+    .view { display: none; }
     .view.active { display: block; }
     #view-home.active { display: block; }
 
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .topic-header {
-        display: flex; align-items: center; gap: 16px;
-        margin-bottom: 20px; flex-wrap: wrap;
-    }
+    .topic-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
     .topic-header .emoji-lg {
-        width: 56px; height: 56px; border-radius: 18px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.8rem; color: #fff;
+        width: 54px; height: 54px; border-radius: 16px;
+        background: linear-gradient(135deg, var(--coral), var(--sun));
+        display: flex; align-items: center; justify-content: center; font-size: 1.7rem; color: #fff;
         box-shadow: var(--shadow);
     }
-    .topic-header h2 { margin: 0; font-size: 1.6rem; color: var(--text); }
-    .topic-header .sub { margin: 2px 0 0; color: var(--text-soft); font-size: .94rem; }
+    .topic-header h2 { margin: 0; font-size: 1.5rem; }
+    .topic-header .sub { margin: 2px 0 0; color: var(--ink-soft); font-size: .92rem; }
 
-    .mode-tabs {
-        display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;
-    }
+    .mode-tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
     .mode-tab {
-        border: none; padding: 10px 20px; border-radius: 999px;
+        border: none; padding: 10px 18px; border-radius: 999px;
         font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .9rem;
-        background: var(--card-bg); backdrop-filter: blur(8px);
-        color: var(--text-soft); cursor: pointer;
-        box-shadow: var(--shadow); transition: all .25s;
+        background: var(--card); color: var(--ink-soft); cursor: pointer;
+        box-shadow: var(--shadow); transition: all .2s;
     }
-    .mode-tab:hover { transform: translateY(-2px); }
-    .mode-tab.active {
-        background: linear-gradient(120deg, var(--accent), var(--accent2));
-        color: #fff; box-shadow: 0 12px 30px -12px rgba(0,0,0,.3);
-    }
+    .mode-tab.active { background: linear-gradient(120deg, var(--teal), var(--teal-dark)); color: #fff; }
 
-    .level-filters {
-        display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
-    }
+    .level-filters { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
     .level-chip {
-        border: 1.5px solid rgba(255,255,255,.2); background: var(--card-bg);
-        backdrop-filter: blur(8px); color: var(--text-soft);
-        padding: 6px 16px; border-radius: 999px;
-        font-size: .8rem; font-weight: 700; cursor: pointer;
-        transition: all .2s;
+        border: 1.5px solid rgba(44,39,64,.12); background: #fff;
+        color: var(--ink-soft); padding: 6px 14px; border-radius: 999px;
+        font-size: .8rem; font-weight: 700; cursor: pointer; transition: all .15s;
     }
-    .level-chip:hover { transform: translateY(-1px); }
-    .level-chip.active {
-        background: var(--text); color: #fff;
-        border-color: var(--text);
-    }
+    .level-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-    .fc-stage {
-        display: flex; flex-direction: column; align-items: center; gap: 22px;
-    }
-    .fc-progress {
-        font-weight: 800; color: var(--text-soft); font-size: .9rem;
-    }
+    /* ---------- Flashcard ---------- */
+    .fc-stage { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .fc-progress { font-weight: 800; color: var(--ink-soft); font-size: .9rem; }
     .flip-card {
-        width: 100%; max-width: 480px; height: 310px;
-        perspective: 1600px; cursor: pointer;
+        width: 100%; max-width: 460px; height: 300px;
+        perspective: 1400px; cursor: pointer; will-change: transform;
     }
     .flip-inner {
         position: relative; width: 100%; height: 100%;
-        transition: transform .6s cubic-bezier(.34,1.45,.5,1);
+        transition: transform .55s cubic-bezier(.22,1,.36,1);
         transform-style: preserve-3d;
     }
     .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
     .face {
         position: absolute; inset: 0;
-        border-radius: 28px;
+        border-radius: 26px;
         backface-visibility: hidden;
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        padding: 32px; text-align: center;
-        box-shadow: var(--shadow), var(--glow);
-        border: 1px solid rgba(255,255,255,.3);
+        padding: 30px; text-align: center;
+        box-shadow: var(--shadow);
+        transition: box-shadow .2s, transform .2s;
     }
-    .face-front {
-        background: var(--card-bg); backdrop-filter: blur(16px);
-    }
-    .face-back {
-        background: linear-gradient(145deg, var(--accent), var(--accent3));
-        color: #fff; transform: rotateY(180deg);
-        border-color: rgba(255,255,255,.2);
-    }
-    .card-word {
-        font-size: 2.2rem; font-weight: 700; margin: 0 0 6px;
-        color: var(--text);
-    }
-    .face-back .card-word { color: #fff; }
-    .card-ipa { color: var(--text-soft); font-size: 1rem; margin: 0 0 4px; }
-    .card-pos {
-        display: inline-block; background: rgba(0,0,0,.06);
-        color: var(--text-soft); font-size: .74rem; font-weight: 800;
-        padding: 3px 12px; border-radius: 999px; margin-bottom: 14px;
-    }
-    .face-back .card-pos { background: rgba(255,255,255,.15); color: #fff; }
+    .face-front { background: linear-gradient(155deg, #ffffff, #fff5ea); border: 1px solid rgba(44,39,64,.06); }
+    .face-back { background: linear-gradient(155deg, var(--teal), #0f9b8c); color: #fff; transform: rotateY(180deg); }
+    .card-word { font-size: 2.1rem; font-weight: 700; margin: 0 0 6px; will-change: transform, opacity; }
+    .card-ipa { color: var(--ink-soft); font-size: 1rem; margin: 0 0 4px; }
+    .card-pos { display: inline-block; background: #f1eee7; color: var(--ink-soft); font-size: .74rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; margin-bottom: 14px; }
     .speak-btn {
-        border: none; width: 48px; height: 48px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        color: #fff; font-size: 1.2rem; cursor: pointer;
-        box-shadow: 0 12px 24px -10px rgba(0,0,0,.3);
-        transition: transform .2s, box-shadow .2s;
-    }
-    .speak-btn:hover { transform: scale(1.1) rotate(-6deg); box-shadow: 0 16px 32px -12px rgba(0,0,0,.4); }
-    .face-front .hint {
-        margin-top: 16px; font-size: .78rem; color: var(--text-soft); opacity: .7;
-    }
-    .card-meaning { font-size: 1.6rem; font-weight: 800; margin: 0 0 14px; }
-    .card-ex {
-        font-size: .88rem; line-height: 1.6; opacity: .95; margin: 4px 0;
-        text-align: left; width: 100%; max-width: 400px;
-    }
-    .card-ex b { opacity: .85; }
-
-    .fc-nav {
-        display: flex; align-items: center; gap: 14px;
-    }
-    .nav-btn {
-        border: none; background: var(--card-bg); backdrop-filter: blur(8px);
-        color: var(--text); width: 48px; height: 48px; border-radius: 50%;
-        font-size: 1.1rem; cursor: pointer; box-shadow: var(--shadow);
+        border: none; width: 46px; height: 46px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--coral), var(--sun)); color: #fff;
+        font-size: 1.15rem; cursor: pointer; box-shadow: 0 10px 20px -8px rgba(255,107,94,.55);
         transition: transform .15s;
     }
-    .nav-btn:hover:not(:disabled) { transform: translateY(-3px); }
+    .speak-btn:hover { transform: scale(1.08); }
+    .face-front .hint { margin-top: 16px; font-size: .78rem; color: var(--ink-soft); opacity: .8; }
+    .card-meaning { font-size: 1.5rem; font-weight: 800; margin: 0 0 14px; will-change: transform, opacity; }
+    .card-ex { font-size: .88rem; line-height: 1.5; opacity: .95; margin: 4px 0; text-align: left; }
+    .card-ex b { opacity: .8; }
+
+    /* small pop animation for card text when it changes */
+    .pop { animation: pop .34s cubic-bezier(.2,.9,.3,1) both; }
+    @keyframes pop {
+        from { transform: translateY(6px) scale(.995); opacity: 0; }
+        to { transform: none; opacity: 1; }
+    }
+
+    .fc-nav { display: flex; align-items: center; gap: 14px; }
+    .nav-btn {
+        border: none; background: var(--card); color: var(--ink);
+        width: 46px; height: 46px; border-radius: 50%; font-size: 1.1rem;
+        cursor: pointer; box-shadow: var(--shadow); transition: transform .15s;
+    }
+    .nav-btn:hover { transform: translateY(-2px); }
     .nav-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
     .shuffle-btn {
-        border: none; background: var(--text); color: #fff;
-        font-weight: 800; padding: 12px 22px; border-radius: 999px;
-        cursor: pointer; font-family: 'Nunito', sans-serif;
+        border: none; background: var(--ink); color: #fff; font-weight: 800;
+        padding: 11px 20px; border-radius: 999px; cursor: pointer; font-family: 'Nunito', sans-serif;
         display: flex; align-items: center; gap: 8px; font-size: .88rem;
-        box-shadow: var(--shadow); transition: transform .2s;
+        box-shadow: var(--shadow);
     }
-    .shuffle-btn:hover { transform: translateY(-3px); }
 
-    .quiz-box {
-        background: var(--card-bg); backdrop-filter: blur(16px);
-        border-radius: 28px; padding: 32px;
-        box-shadow: var(--shadow), var(--glow);
-        border: 1px solid rgba(255,255,255,.3);
-        max-width: 560px; margin: 0 auto;
-    }
-    .quiz-top {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 20px;
-    }
-    .quiz-progress-bar {
-        flex: 1; height: 8px; border-radius: 999px;
-        background: rgba(0,0,0,.08); margin: 0 14px; overflow: hidden;
-    }
-    .quiz-progress-fill {
-        height: 100%; border-radius: 999px;
-        background: linear-gradient(90deg, var(--accent), var(--accent2));
-        transition: width .5s ease;
-    }
-    .quiz-score {
-        font-weight: 800; color: var(--text-soft); font-size: .85rem;
-        white-space: nowrap;
-    }
-    .quiz-q-wrap {
-        text-align: center; margin-bottom: 24px;
-    }
-    .quiz-q-label {
-        color: var(--text-soft); font-size: .82rem; font-weight: 700;
-        margin-bottom: 8px;
-    }
-    .quiz-q {
-        font-size: 1.8rem; font-weight: 700; margin: 6px 0;
-        color: var(--text);
-    }
-    .quiz-options {
-        display: grid; gap: 12px;
-    }
+    /* ---------- Quiz ---------- */
+    .quiz-box { background: var(--card); border-radius: 26px; padding: 30px; box-shadow: var(--shadow); max-width: 560px; margin: 0 auto; }
+    .quiz-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .quiz-progress-bar { flex: 1; height: 8px; border-radius: 999px; background: #f1eee7; margin: 0 14px; overflow: hidden; }
+    .quiz-progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--sun)); border-radius: 999px; transition: width .3s; }
+    .quiz-score { font-weight: 800; color: var(--ink-soft); font-size: .85rem; white-space: nowrap; }
+    .quiz-q-wrap { text-align: center; margin-bottom: 22px; }
+    .quiz-q-label { color: var(--ink-soft); font-size: .82rem; font-weight: 700; margin-bottom: 8px; }
+    .quiz-q { font-size: 1.7rem; font-weight: 700; margin: 6px 0; }
+    .quiz-options { display: grid; gap: 12px; }
     .quiz-opt {
-        border: 2px solid rgba(255,255,255,.15);
-        background: rgba(255,255,255,.4); backdrop-filter: blur(4px);
-        padding: 14px 18px; border-radius: 16px; text-align: left;
+        border: 2px solid rgba(44,39,64,.1); background: #fff;
+        padding: 14px 16px; border-radius: 16px; text-align: left;
         font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .96rem;
-        color: var(--text); cursor: pointer;
-        transition: all .2s;
+        color: var(--ink); cursor: pointer; transition: all .15s;
     }
-    .quiz-opt:hover:not(:disabled) {
-        border-color: var(--accent);
-        background: rgba(255,255,255,.6);
-        transform: translateX(4px);
-    }
-    .quiz-opt.correct {
-        border-color: var(--accent);
-        background: rgba(15,155,140,.15);
-        color: var(--accent);
-    }
-    .quiz-opt.wrong {
-        border-color: #e8436e;
-        background: rgba(232,67,110,.12);
-        color: #e8436e;
-    }
-    .quiz-opt:disabled { cursor: default; opacity: .7; }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--teal); background: #f2fbf9; }
+    .quiz-opt.correct { border-color: var(--teal); background: #e3faf5; color: var(--teal-dark); }
+    .quiz-opt.wrong { border-color: var(--coral); background: #fff0ee; color: var(--coral-dark); }
+    .quiz-opt:disabled { cursor: default; }
     .quiz-next {
-        display: none; margin: 22px auto 0; border: none;
-        background: linear-gradient(120deg, var(--accent), var(--accent2));
-        color: #fff; font-weight: 800; padding: 14px 30px;
-        border-radius: 999px; cursor: pointer;
+        display: none; margin: 20px auto 0; border: none;
+        background: linear-gradient(120deg, var(--coral), var(--sun)); color: #fff;
+        font-weight: 800; padding: 12px 26px; border-radius: 999px; cursor: pointer;
         font-family: 'Nunito', sans-serif; box-shadow: var(--shadow);
-        transition: transform .2s;
     }
-    .quiz-next:hover { transform: translateY(-3px); }
     .quiz-result { text-align: center; }
-    .quiz-result .big-score {
-        font-size: 3.2rem; font-weight: 800; font-family: 'Baloo 2', sans-serif;
-        margin: 6px 0; color: var(--text);
-    }
-    .quiz-result p { color: var(--text-soft); }
+    .quiz-result .big-score { font-size: 3rem; font-weight: 800; font-family: 'Baloo 2', sans-serif; margin: 6px 0; }
+    .quiz-result p { color: var(--ink-soft); }
     .restart-btn {
-        border: none; background: var(--text); color: #fff;
-        font-weight: 800; padding: 14px 28px; border-radius: 999px;
-        cursor: pointer; margin-top: 10px;
-        font-family: 'Nunito', sans-serif; box-shadow: var(--shadow);
-        transition: transform .2s;
+        border: none; background: var(--ink); color: #fff; font-weight: 800;
+        padding: 12px 26px; border-radius: 999px; cursor: pointer; margin-top: 10px;
+        font-family: 'Nunito', sans-serif;
     }
-    .restart-btn:hover { transform: translateY(-3px); }
 
     .toast {
-        position: fixed; left: 50%; bottom: 30px;
-        transform: translateX(-50%) translateY(20px);
-        background: var(--text); color: #fff;
-        padding: 14px 26px; border-radius: 999px;
-        font-weight: 700; font-size: .9rem;
-        opacity: 0; pointer-events: none;
-        transition: all .4s cubic-bezier(.34,1.56,.64,1);
-        box-shadow: 0 20px 40px -16px rgba(0,0,0,.4);
-        z-index: 100; font-family: 'Nunito', sans-serif;
+        position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
+        background: var(--ink); color: #fff; padding: 12px 22px; border-radius: 999px;
+        font-weight: 700; font-size: .88rem; opacity: 0; pointer-events: none;
+        transition: all .3s; box-shadow: var(--shadow); z-index: 50;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 520px) {
-        .flip-card { height: 350px; }
+    @media (max-width: 480px) {
+        .flip-card { height: 340px; }
         .card-word { font-size: 1.7rem; }
-        .topic-grid { grid-template-columns: repeat(2, 1fr); }
-        .quiz-box { padding: 20px; }
-    }
-    @media (max-width: 400px) {
-        .topic-grid { grid-template-columns: 1fr; }
-        .top-bar { flex-direction: column; align-items: stretch; }
-        .theme-toggle { justify-content: center; }
     }
 </style>
 </head>
-<body class="theme-ocean">
+<body>
 
-<!-- ===== ANIMATED BACKGROUND ===== -->
-<canvas id="bgCanvas"></canvas>
-<div class="bg-overlay"></div>
+<div class="bg-deco">
+    <div class="dots"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+</div>
 
 <div class="wrap">
-
-    <!-- TOP BAR -->
     <div class="top-bar">
-        <div class="brand">
-            <span class="brand-badge">🃏</span>
-            Flashcard Premium
-        </div>
-        <div class="top-actions">
-            <button class="theme-toggle" id="themeToggle">
-                <span class="dot" id="themeDot" style="background:linear-gradient(135deg,#0f9b8c,#4fc3d0);"></span>
-                <span id="themeLabel">Ocean</span>
-            </button>
-            <button class="back-btn" id="backBtn">← Chủ đề khác</button>
-        </div>
+        <div class="brand"><span class="brand-badge">🃏</span> uyên choẹt app</div>
+        <button class="back-btn" id="backBtn">← Chủ đề khác</button>
     </div>
 
-    <!-- ===== HOME ===== -->
+    <!-- HOME -->
     <div class="view active" id="view-home">
         <div class="hero">
-            <h1>📚 Học từ vựng qua Flashcard</h1>
-            <p>Chọn một chủ đề để bắt đầu ôn từ, nghe phát âm và làm trắc nghiệm.</p>
+            <h1>Học từ vựng qua Flashcard</h1>
+            <p>Chọn một chủ đề để bắt đầu ôn từ vựng, nghe phát âm và làm trắc nghiệm.</p>
         </div>
         <div class="topic-grid" id="topicGrid"></div>
     </div>
 
-    <!-- ===== TOPIC (placeholder, sẽ được render động) ===== -->
+    <!-- TOPIC -->
     <div class="view" id="view-topic">
         <div class="topic-header">
-            <div class="emoji-lg" id="topicEmoji">🏮</div>
+            <div class="emoji-lg">🏮</div>
             <div>
-                <h2 id="topicName">Tradition</h2>
-                <p class="sub" id="topicDesc">Truyền thống — 22 từ vựng</p>
+                <h2>Tradition</h2>
+                <p class="sub">Truyền thống — 30 từ vựng chủ đề văn hoá &amp; lễ hội</p>
             </div>
         </div>
 
@@ -467,13 +321,15 @@
         </div>
 
         <div class="level-filters" id="levelFilters">
-            <!-- Sẽ được tạo động bằng JS -->
+            <button class="level-chip active" data-level="all">Tất cả (30)</button>
+            <button class="level-chip" data-level="A1-A2">A1–A2 (23)</button>
+            <button class="level-chip" data-level="B1">B1 (7)</button>
         </div>
 
-        <!-- FLASHCARD -->
+        <!-- FLASHCARD MODE -->
         <div id="modeFlashcard">
             <div class="fc-stage">
-                <div class="fc-progress" id="fcProgress">1 / 22</div>
+                <div class="fc-progress" id="fcProgress">1 / 30</div>
                 <div class="flip-card" id="flipCard">
                     <div class="flip-inner">
                         <div class="face face-front">
@@ -484,7 +340,7 @@
                             <p class="hint">Bấm vào thẻ để xem nghĩa</p>
                         </div>
                         <div class="face face-back">
-                            <p class="card-word" id="cardMeaningBack" style="font-size:1.8rem;font-weight:800;margin:0 0 10px;">Truyền thống</p>
+                            <p class="card-meaning" id="cardMeaning">Truyền thống</p>
                             <p class="card-ex" id="cardEx1"><b>Ex1:</b> ...</p>
                             <p class="card-ex" id="cardEx2"><b>Ex2:</b> ...</p>
                         </div>
@@ -498,7 +354,7 @@
             </div>
         </div>
 
-        <!-- QUIZ -->
+        <!-- QUIZ MODE -->
         <div id="modeQuiz" style="display:none;">
             <div class="quiz-box">
                 <div id="quizPlay">
@@ -510,7 +366,7 @@
                     <div class="quiz-q-wrap">
                         <div class="quiz-q-label">Từ này có nghĩa là gì?</div>
                         <div class="quiz-q" id="quizWord">Tradition</div>
-                        <button class="speak-btn" id="quizSpeakBtn" title="Nghe phát âm" style="margin-top:8px;">🔊</button>
+                        <button class="speak-btn" id="quizSpeakBtn" title="Nghe phát âm">🔊</button>
                     </div>
                     <div class="quiz-options" id="quizOptions"></div>
                     <button class="quiz-next" id="quizNextBtn">Câu tiếp theo →</button>
@@ -529,920 +385,182 @@
 <div class="toast" id="toast">Chủ đề này sắp ra mắt 🚧</div>
 
 <script>
-/* ================================================================
-   DỮ LIỆU TỪ VỰNG – 10 CHỦ ĐỀ, MỖI CHỦ ĐỀ 22 TỪ (20 A1-A2 + 2 B1)
-   ================================================================ */
-
+/* ================= DATA ================= */
 const VOCAB = [
-    // ===== TRADITION (đã có sẵn, giữ nguyên 30 từ) =====
-    {level:"A1-A2", word:"Tradition", ipa:"/trəˈdɪʃn/", pos:"noun", meaning:"Truyền thống",
-     ex1:"It is a tradition to eat mooncakes during the Mid-Autumn Festival.",
-     ex2:"Our family has a strong tradition of gathering every Sunday."},
-    {level:"A1-A2", word:"Custom", ipa:"/ˈkʌstəm/", pos:"noun", meaning:"Tập quán, phong tục",
-     ex1:"Giving red envelopes at Tet is a popular custom in Vietnam.",
-     ex2:"You should learn about local customs before traveling abroad."},
-    {level:"A1-A2", word:"Festival", ipa:"/ˈfestɪvl/", pos:"noun", meaning:"Lễ hội",
-     ex1:"The lantern festival attracts thousands of visitors every year.",
-     ex2:"Spring is the season of many traditional festivals."},
-    {level:"A1-A2", word:"Celebrate", ipa:"/ˈselɪbreɪt/", pos:"verb", meaning:"Kỷ niệm, ăn mừng",
-     ex1:"We celebrate New Year's Eve with fireworks and music.",
-     ex2:"How do people in your country celebrate birthdays?"},
-    {level:"A1-A2", word:"Culture", ipa:"/ˈkʌltʃə(r)/", pos:"noun", meaning:"Văn hóa",
-     ex1:"Food is an important part of national culture.",
-     ex2:"Learning a language helps you understand its culture."},
-    {level:"A1-A2", word:"Gift", ipa:"/ɡɪft/", pos:"noun", meaning:"Quà tặng",
-     ex1:"Exchanging gifts is common during Christmas.",
-     ex2:"She brought a small gift for the host of the party."},
-    {level:"A1-A2", word:"Special", ipa:"/ˈspeʃl/", pos:"adj", meaning:"Đặc biệt",
-     ex1:"We cook special dishes only on holidays.",
-     ex2:"Tet is a special time for family reunions."},
-    {level:"A1-A2", word:"Family", ipa:"/ˈfæməli/", pos:"noun", meaning:"Gia đình",
-     ex1:"Traditional holidays are meant to be spent with family.",
-     ex2:"All family members gather around the dinner table."},
-    {level:"A1-A2", word:"Clothes", ipa:"/kləʊðz/", pos:"noun", meaning:"Quần áo, trang phục",
-     ex1:"People often wear traditional clothes during weddings.",
-     ex2:"She bought new clothes for the festival."},
-    {level:"A1-A2", word:"Food", ipa:"/fuːd/", pos:"noun", meaning:"Thức ăn",
-     ex1:"Sticky rice is a traditional food in Southeast Asia.",
-     ex2:"Street food reflects the local culture well."},
-    {level:"A1-A2", word:"Holiday", ipa:"/ˈhɒlədeɪ/", pos:"noun", meaning:"Ngày lễ, kỳ nghỉ",
-     ex1:"Tet is the biggest public holiday in Vietnam.",
-     ex2:"Many shops close during the national holiday."},
-    {level:"A1-A2", word:"Gather", ipa:"/ˈɡæðə(r)/", pos:"verb", meaning:"Tụ họp, quây quần",
-     ex1:"Relatives gather at my grandparents' house every spring.",
-     ex2:"People gathered in the square to watch the parade."},
-    {level:"A1-A2", word:"History", ipa:"/ˈhɪstri/", pos:"noun", meaning:"Lịch sử",
-     ex1:"This traditional festival has a long history.",
-     ex2:"The museum displays objects related to local history."},
-    {level:"A1-A2", word:"Music", ipa:"/ˈmjuːzɪk/", pos:"noun", meaning:"Âm nhạc",
-     ex1:"Folk music is played at the traditional village fair.",
-     ex2:"They danced to traditional music all night."},
-    {level:"A1-A2", word:"Dance", ipa:"/dɑːns/", pos:"noun/verb", meaning:"Điệu nhảy, nhảy múa",
-     ex1:"The lion dance is performed to bring good luck.",
-     ex2:"Children love to dance during the festival."},
-    {level:"A1-A2", word:"Costume", ipa:"/ˈkɒstjuːm/", pos:"noun", meaning:"Trang phục truyền thống/hóa trang",
-     ex1:"The Ao Dai is the national costume of Vietnam.",
-     ex2:"Dancers wore colorful traditional costumes."},
-    {level:"A1-A2", word:"Symbol", ipa:"/ˈsɪmbl/", pos:"noun", meaning:"Biểu tượng",
-     ex1:"Peach blossoms are a symbol of spring in the North.",
-     ex2:"The red dragon is a symbol of strength in eastern culture."},
-    {level:"A1-A2", word:"Generation", ipa:"/ˌdʒenəˈreɪʃn/", pos:"noun", meaning:"Thế hệ",
-     ex1:"This recipe has been passed down through generations.",
-     ex2:"Older generations value traditional customs very much."},
-    {level:"A1-A2", word:"Respect", ipa:"/rɪˈspekt/", pos:"verb/noun", meaning:"Tôn trọng, sự kính trọng",
-     ex1:"Children are taught to respect their elders.",
-     ex2:"Showing respect to ancestors is a key tradition."},
-    {level:"A1-A2", word:"Belief", ipa:"/bɪˈliːf/", pos:"noun", meaning:"Niềm tin, tín ngưỡng",
-     ex1:"It is a traditional belief that red brings good fortune.",
-     ex2:"These rituals are based on ancient beliefs."},
-    {level:"A1-A2", word:"Ritual", ipa:"/ˈrɪtʃuəl/", pos:"noun", meaning:"Nghi lễ",
-     ex1:"The tea ceremony is a traditional ritual in Japan.",
-     ex2:"Lighting candles is part of the religious ritual."},
-    {level:"A1-A2", word:"Pass down", ipa:"/pɑːs daʊn/", pos:"phrasal verb", meaning:"Truyền lại (cho thế hệ sau)",
-     ex1:"Grandmothers pass down folk tales to their grandchildren.",
-     ex2:"These craft skills were passed down from father to son."},
-    {level:"A1-A2", word:"Prepare", ipa:"/prɪˈpeər/", pos:"verb", meaning:"Chuẩn bị",
-     ex1:"Families spend days preparing for the New Year.",
-     ex2:"They prepare traditional sweets for guests."},
-    {level:"B1", word:"Heritage", ipa:"/ˈherɪtɪdʒ/", pos:"noun", meaning:"Di sản",
-     ex1:"Quan Ho singing is recognized as a cultural heritage.",
-     ex2:"We must protect our historical buildings and cultural heritage."},
-    {level:"B1", word:"Preserve", ipa:"/prɪˈzɜːv/", pos:"verb", meaning:"Bảo tồn, giữ gìn",
-     ex1:"The local community works hard to preserve old traditions.",
-     ex2:"Museums help preserve historical artifacts for the future."},
-    {level:"B1", word:"Ancestor", ipa:"/ˈænsestə(r)/", pos:"noun", meaning:"Tổ tiên",
-     ex1:"People burn incense to pay respect to their ancestors.",
-     ex2:"Our ancestors built this village hundreds of years ago."},
-    {level:"B1", word:"Identity", ipa:"/aɪˈdentəti/", pos:"noun", meaning:"Bản sắc, danh tính",
-     ex1:"Traditional arts help maintain a country's cultural identity.",
-     ex2:"Wearing traditional attire gives people a sense of national identity."},
-    {level:"B1", word:"Hospitality", ipa:"/ˌhɒspɪˈtæləti/", pos:"noun", meaning:"Lòng hiếu khách",
-     ex1:"Local people are famous for their warm hospitality.",
-     ex2:"Offering tea to visitors is a traditional sign of hospitality."},
-    {level:"B1", word:"Value", ipa:"/ˈvæljuː/", pos:"noun/verb", meaning:"Giá trị, coi trọng",
-     ex1:"Many Asian cultures value family togetherness.",
-     ex2:"Traditional moral values are still taught in schools."},
-    {level:"B1", word:"Origin", ipa:"/ˈɒrɪdʒɪn/", pos:"noun", meaning:"Nguồn gốc, xuất xứ",
-     ex1:"The origin of this festival dates back to the 15th century.",
-     ex2:"Scholars are studying the origins of these traditional dances."},
-
-    // ===== ENVIRONMENT (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Environment", ipa:"/ɪnˈvaɪrənmənt/", pos:"noun", meaning:"Môi trường",
-     ex1:"We need to protect the environment for future generations.",
-     ex2:"Pollution is harming the environment."},
-    {level:"A1-A2", word:"Nature", ipa:"/ˈneɪtʃə(r)/", pos:"noun", meaning:"Thiên nhiên",
-     ex1:"I love spending time in nature.",
-     ex2:"The beauty of nature is amazing."},
-    {level:"A1-A2", word:"Pollution", ipa:"/pəˈluːʃn/", pos:"noun", meaning:"Ô nhiễm",
-     ex1:"Air pollution is a big problem in big cities.",
-     ex2:"We should reduce pollution by using less plastic."},
-    {level:"A1-A2", word:"Recycle", ipa:"/riːˈsaɪkl/", pos:"verb", meaning:"Tái chế",
-     ex1:"We recycle paper, glass and plastic.",
-     ex2:"Recycling helps protect the environment."},
-    {level:"A1-A2", word:"Waste", ipa:"/weɪst/", pos:"noun/verb", meaning:"Rác thải, lãng phí",
-     ex1:"Don't waste water.",
-     ex2:"The factory produces a lot of waste."},
-    {level:"A1-A2", word:"Energy", ipa:"/ˈenədʒi/", pos:"noun", meaning:"Năng lượng",
-     ex1:"Solar energy is clean and renewable.",
-     ex2:"We should save energy by turning off lights."},
-    {level:"A1-A2", word:"Clean", ipa:"/kliːn/", pos:"adj/verb", meaning:"Sạch sẽ, lau chùi",
-     ex1:"We should keep our city clean.",
-     ex2:"Please clean the table after eating."},
-    {level:"A1-A2", word:"Water", ipa:"/ˈwɔːtə(r)/", pos:"noun", meaning:"Nước",
-     ex1:"Water is essential for all living things.",
-     ex2:"We need clean water to drink."},
-    {level:"A1-A2", word:"Air", ipa:"/eə(r)/", pos:"noun", meaning:"Không khí",
-     ex1:"The air in the countryside is very fresh.",
-     ex2:"Air pollution is harmful to health."},
-    {level:"A1-A2", word:"Plant", ipa:"/plɑːnt/", pos:"noun/verb", meaning:"Cây cối, trồng cây",
-     ex1:"Plants need sunlight and water to grow.",
-     ex2:"We plant trees to make the world greener."},
-    {level:"A1-A2", word:"Animal", ipa:"/ˈænɪml/", pos:"noun", meaning:"Động vật",
-     ex1:"Many animals live in the forest.",
-     ex2:"We should protect endangered animals."},
-    {level:"A1-A2", word:"Forest", ipa:"/ˈfɒrɪst/", pos:"noun", meaning:"Rừng",
-     ex1:"The Amazon is the largest rainforest in the world.",
-     ex2:"Forests provide oxygen for us."},
-    {level:"A1-A2", word:"Save", ipa:"/seɪv/", pos:"verb", meaning:"Tiết kiệm, cứu",
-     ex1:"We should save water.",
-     ex2:"Save the planet by recycling."},
-    {level:"A1-A2", word:"Reduce", ipa:"/rɪˈdjuːs/", pos:"verb", meaning:"Giảm bớt",
-     ex1:"Reduce your speed when driving in the city.",
-     ex2:"We need to reduce plastic waste."},
-    {level:"A1-A2", word:"Reuse", ipa:"/riːˈjuːz/", pos:"verb", meaning:"Tái sử dụng",
-     ex1:"You can reuse glass jars.",
-     ex2:"Reusing items is better than throwing them away."},
-    {level:"A1-A2", word:"Climate", ipa:"/ˈklaɪmət/", pos:"noun", meaning:"Khí hậu",
-     ex1:"The climate is changing due to global warming.",
-     ex2:"Vietnam has a tropical climate."},
-    {level:"A1-A2", word:"Oxygen", ipa:"/ˈɒksɪdʒən/", pos:"noun", meaning:"Oxy",
-     ex1:"We need oxygen to breathe.",
-     ex2:"Trees produce oxygen."},
-    {level:"A1-A2", word:"Garden", ipa:"/ˈɡɑːdn/", pos:"noun", meaning:"Khu vườn",
-     ex1:"She grows vegetables in her garden.",
-     ex2:"The garden is full of beautiful flowers."},
-    {level:"A1-A2", word:"Soil", ipa:"/sɔɪl/", pos:"noun", meaning:"Đất",
-     ex1:"Plants grow in soil.",
-     ex2:"The soil here is very rich."},
-    {level:"A1-A2", word:"Earth", ipa:"/ɜːθ/", pos:"noun", meaning:"Trái đất",
-     ex1:"Earth is the planet we live on.",
-     ex2:"We must take care of the Earth."},
-    {level:"B1", word:"Sustainable", ipa:"/səˈsteɪnəbl/", pos:"adj", meaning:"Bền vững",
-     ex1:"Sustainable development is important for the future.",
-     ex2:"We need sustainable energy sources."},
-    {level:"B1", word:"Ecosystem", ipa:"/ˈiːkəʊsɪstəm/", pos:"noun", meaning:"Hệ sinh thái",
-     ex1:"The ecosystem is fragile and needs protection.",
-     ex2:"Human activities are damaging the ecosystem."},
-
-    // ===== FOOD & DRINK (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Food", ipa:"/fuːd/", pos:"noun", meaning:"Thức ăn",
-     ex1:"I like Vietnamese food.",
-     ex2:"We should eat healthy food."},
-    {level:"A1-A2", word:"Drink", ipa:"/drɪŋk/", pos:"verb/noun", meaning:"Uống, đồ uống",
-     ex1:"I drink water every day.",
-     ex2:"What is your favorite drink?"},
-    {level:"A1-A2", word:"Water", ipa:"/ˈwɔːtə(r)/", pos:"noun", meaning:"Nước",
-     ex1:"We need to drink lots of water.",
-     ex2:"The water is clean."},
-    {level:"A1-A2", word:"Rice", ipa:"/raɪs/", pos:"noun", meaning:"Cơm, gạo",
-     ex1:"Rice is a staple food in Asia.",
-     ex2:"I eat rice every day."},
-    {level:"A1-A2", word:"Meat", ipa:"/miːt/", pos:"noun", meaning:"Thịt",
-     ex1:"She doesn't eat meat.",
-     ex2:"I like grilled meat."},
-    {level:"A1-A2", word:"Vegetable", ipa:"/ˈvedʒtəbl/", pos:"noun", meaning:"Rau củ",
-     ex1:"Vegetables are good for health.",
-     ex2:"I buy fresh vegetables at the market."},
-    {level:"A1-A2", word:"Fruit", ipa:"/fruːt/", pos:"noun", meaning:"Trái cây",
-     ex1:"Apple is a type of fruit.",
-     ex2:"We should eat fruit every day."},
-    {level:"A1-A2", word:"Bread", ipa:"/bred/", pos:"noun", meaning:"Bánh mì",
-     ex1:"Bread is made from flour.",
-     ex2:"I eat bread for breakfast."},
-    {level:"A1-A2", word:"Milk", ipa:"/mɪlk/", pos:"noun", meaning:"Sữa",
-     ex1:"Children should drink milk.",
-     ex2:"I don't like milk."},
-    {level:"A1-A2", word:"Egg", ipa:"/eɡ/", pos:"noun", meaning:"Trứng",
-     ex1:"I eat an egg every morning.",
-     ex2:"Eggs are a good source of protein."},
-    {level:"A1-A2", word:"Fish", ipa:"/fɪʃ/", pos:"noun", meaning:"Cá",
-     ex1:"Fish is a healthy food.",
-     ex2:"I love fish and chips."},
-    {level:"A1-A2", word:"Noodle", ipa:"/ˈnuːdl/", pos:"noun", meaning:"Mì, phở",
-     ex1:"I like to eat noodles.",
-     ex2:"Pho is a famous Vietnamese noodle soup."},
-    {level:"A1-A2", word:"Soup", ipa:"/suːp/", pos:"noun", meaning:"Súp, canh",
-     ex1:"Soup is warm and tasty.",
-     ex2:"My mother makes good soup."},
-    {level:"A1-A2", word:"Sweet", ipa:"/swiːt/", pos:"adj", meaning:"Ngọt",
-     ex1:"This cake is too sweet.",
-     ex2:"Sweet food is not good for health."},
-    {level:"A1-A2", word:"Cake", ipa:"/keɪk/", pos:"noun", meaning:"Bánh ngọt",
-     ex1:"She baked a cake for the party.",
-     ex2:"I love chocolate cake."},
-    {level:"A1-A2", word:"Tea", ipa:"/tiː/", pos:"noun", meaning:"Trà",
-     ex1:"I like green tea.",
-     ex2:"Would you like some tea?"},
-    {level:"A1-A2", word:"Coffee", ipa:"/ˈkɒfi/", pos:"noun", meaning:"Cà phê",
-     ex1:"I drink coffee in the morning.",
-     ex2:"Coffee is popular in Vietnam."},
-    {level:"A1-A2", word:"Juice", ipa:"/dʒuːs/", pos:"noun", meaning:"Nước ép",
-     ex1:"Orange juice is delicious.",
-     ex2:"She drinks juice every day."},
-    {level:"A1-A2", word:"Cook", ipa:"/kʊk/", pos:"verb", meaning:"Nấu ăn",
-     ex1:"I like to cook.",
-     ex2:"She cooks dinner for her family."},
-    {level:"A1-A2", word:"Taste", ipa:"/teɪst/", pos:"verb/noun", meaning:"Nếm, vị",
-     ex1:"This soup tastes good.",
-     ex2:"What does this fruit taste like?"},
-    {level:"B1", word:"Nutrition", ipa:"/njuːˈtrɪʃn/", pos:"noun", meaning:"Dinh dưỡng",
-     ex1:"Good nutrition is important for health.",
-     ex2:"We need to pay attention to nutrition."},
-    {level:"B1", word:"Ingredients", ipa:"/ɪnˈɡriːdiənts/", pos:"noun", meaning:"Nguyên liệu",
-     ex1:"These are the ingredients for the cake.",
-     ex2:"You need to prepare all ingredients."},
-
-    // ===== SCHOOL LIFE (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"School", ipa:"/skuːl/", pos:"noun", meaning:"Trường học",
-     ex1:"I go to school every day.",
-     ex2:"Our school is big."},
-    {level:"A1-A2", word:"Teacher", ipa:"/ˈtiːtʃə(r)/", pos:"noun", meaning:"Giáo viên",
-     ex1:"My teacher is very kind.",
-     ex2:"Teachers help us learn."},
-    {level:"A1-A2", word:"Student", ipa:"/ˈstjuːdnt/", pos:"noun", meaning:"Học sinh",
-     ex1:"I am a student.",
-     ex2:"Students are in class."},
-    {level:"A1-A2", word:"Book", ipa:"/bʊk/", pos:"noun", meaning:"Sách",
-     ex1:"I like reading books.",
-     ex2:"Please open your book."},
-    {level:"A1-A2", word:"Pen", ipa:"/pen/", pos:"noun", meaning:"Bút mực",
-     ex1:"I write with a pen.",
-     ex2:"Can you lend me a pen?"},
-    {level:"A1-A2", word:"Pencil", ipa:"/ˈpensl/", pos:"noun", meaning:"Bút chì",
-     ex1:"I use a pencil to draw.",
-     ex2:"Where is my pencil?"},
-    {level:"A1-A2", word:"Classroom", ipa:"/ˈklɑːsruːm/", pos:"noun", meaning:"Lớp học",
-     ex1:"We study in the classroom.",
-     ex2:"The classroom is clean."},
-    {level:"A1-A2", word:"Lesson", ipa:"/ˈlesn/", pos:"noun", meaning:"Bài học",
-     ex1:"Today's lesson is about animals.",
-     ex2:"I love English lessons."},
-    {level:"A1-A2", word:"Exam", ipa:"/ɪɡˈzæm/", pos:"noun", meaning:"Bài kiểm tra",
-     ex1:"We have an exam tomorrow.",
-     ex2:"The exam is difficult."},
-    {level:"A1-A2", word:"Homework", ipa:"/ˈhəʊmwɜːk/", pos:"noun", meaning:"Bài tập về nhà",
-     ex1:"I do my homework in the evening.",
-     ex2:"Homework helps us practice."},
-    {level:"A1-A2", word:"Learn", ipa:"/lɜːn/", pos:"verb", meaning:"Học",
-     ex1:"I want to learn English.",
-     ex2:"We learn a lot at school."},
-    {level:"A1-A2", word:"Study", ipa:"/ˈstʌdi/", pos:"verb", meaning:"Học tập",
-     ex1:"She studies hard for the test.",
-     ex2:"I study in the library."},
-    {level:"A1-A2", word:"Friend", ipa:"/frend/", pos:"noun", meaning:"Bạn bè",
-     ex1:"My best friend is kind.",
-     ex2:"I play with my friends."},
-    {level:"A1-A2", word:"Playground", ipa:"/ˈpleɪɡraʊnd/", pos:"noun", meaning:"Sân chơi",
-     ex1:"Children play in the playground.",
-     ex2:"We have a big playground."},
-    {level:"A1-A2", word:"Library", ipa:"/ˈlaɪbrəri/", pos:"noun", meaning:"Thư viện",
-     ex1:"I borrow books from the library.",
-     ex2:"The library is quiet."},
-    {level:"A1-A2", word:"Board", ipa:"/bɔːd/", pos:"noun", meaning:"Bảng (viết)",
-     ex1:"The teacher writes on the board.",
-     ex2:"What is on the board?"},
-    {level:"A1-A2", word:"Answer", ipa:"/ˈɑːnsə(r)/", pos:"verb/noun", meaning:"Trả lời, câu trả lời",
-     ex1:"Please answer the question.",
-     ex2:"I know the answer."},
-    {level:"A1-A2", word:"Question", ipa:"/ˈkwestʃən/", pos:"noun", meaning:"Câu hỏi",
-     ex1:"Do you have any questions?",
-     ex2:"I don't understand the question."},
-    {level:"A1-A2", word:"Test", ipa:"/test/", pos:"noun/verb", meaning:"Bài kiểm tra, kiểm tra",
-     ex1:"We have a test on Friday.",
-     ex2:"The teacher tests our knowledge."},
-    {level:"A1-A2", word:"Grade", ipa:"/ɡreɪd/", pos:"noun", meaning:"Điểm số, lớp",
-     ex1:"I got a good grade in math.",
-     ex2:"She is in the 5th grade."},
-    {level:"B1", word:"Curriculum", ipa:"/kəˈrɪkjələm/", pos:"noun", meaning:"Chương trình học",
-     ex1:"The school follows a modern curriculum.",
-     ex2:"The curriculum includes many subjects."},
-    {level:"B1", word:"Qualification", ipa:"/ˌkwɒlɪfɪˈkeɪʃn/", pos:"noun", meaning:"Bằng cấp, trình độ",
-     ex1:"He has a teaching qualification.",
-     ex2:"Qualifications are important for jobs."},
-
-    // ===== TRAVEL (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Travel", ipa:"/ˈtrævl/", pos:"verb/noun", meaning:"Du lịch, đi lại",
-     ex1:"I love to travel to new places.",
-     ex2:"Travel is expensive."},
-    {level:"A1-A2", word:"Tourist", ipa:"/ˈtʊərɪst/", pos:"noun", meaning:"Khách du lịch",
-     ex1:"There are many tourists in the city.",
-     ex2:"Tourists like to take photos."},
-    {level:"A1-A2", word:"Airport", ipa:"/ˈeəpɔːt/", pos:"noun", meaning:"Sân bay",
-     ex1:"We went to the airport to catch a flight.",
-     ex2:"The airport is busy."},
-    {level:"A1-A2", word:"Flight", ipa:"/flaɪt/", pos:"noun", meaning:"Chuyến bay",
-     ex1:"Our flight is at 6 a.m.",
-     ex2:"The flight was delayed."},
-    {level:"A1-A2", word:"Ticket", ipa:"/ˈtɪkɪt/", pos:"noun", meaning:"Vé",
-     ex1:"I need to buy a train ticket.",
-     ex2:"How much is the ticket?"},
-    {level:"A1-A2", word:"Hotel", ipa:"/həʊˈtel/", pos:"noun", meaning:"Khách sạn",
-     ex1:"We stayed at a nice hotel.",
-     ex2:"The hotel has a swimming pool."},
-    {level:"A1-A2", word:"Beach", ipa:"/biːtʃ/", pos:"noun", meaning:"Bãi biển",
-     ex1:"The beach is beautiful.",
-     ex2:"We relax on the beach."},
-    {level:"A1-A2", word:"Mountain", ipa:"/ˈmaʊntən/", pos:"noun", meaning:"Núi",
-     ex1:"We climbed a high mountain.",
-     ex2:"The mountain is covered with snow."},
-    {level:"A1-A2", word:"Map", ipa:"/mæp/", pos:"noun", meaning:"Bản đồ",
-     ex1:"I use a map to find directions.",
-     ex2:"The map shows all the streets."},
-    {level:"A1-A2", word:"Guide", ipa:"/ɡaɪd/", pos:"noun/verb", meaning:"Hướng dẫn viên, hướng dẫn",
-     ex1:"The guide showed us around the city.",
-     ex2:"Follow the guide instructions."},
-    {level:"A1-A2", word:"Suitcase", ipa:"/ˈsuːtkeɪs/", pos:"noun", meaning:"Vali",
-     ex1:"I packed my suitcase for the trip.",
-     ex2:"The suitcase is heavy."},
-    {level:"A1-A2", word:"Passport", ipa:"/ˈpɑːspɔːt/", pos:"noun", meaning:"Hộ chiếu",
-     ex1:"You need a passport to travel abroad.",
-     ex2:"My passport is valid."},
-    {level:"A1-A2", word:"Country", ipa:"/ˈkʌntri/", pos:"noun", meaning:"Quốc gia",
-     ex1:"I want to visit many countries.",
-     ex2:"Vietnam is a beautiful country."},
-    {level:"A1-A2", word:"City", ipa:"/ˈsɪti/", pos:"noun", meaning:"Thành phố",
-     ex1:"I live in a big city.",
-     ex2:"The city is crowded."},
-    {level:"A1-A2", word:"Language", ipa:"/ˈlæŋɡwɪdʒ/", pos:"noun", meaning:"Ngôn ngữ",
-     ex1:"I am learning a new language.",
-     ex2:"English is an international language."},
-    {level:"A1-A2", word:"Visit", ipa:"/ˈvɪzɪt/", pos:"verb", meaning:"Tham quan, thăm",
-     ex1:"We visit our grandparents every year.",
-     ex2:"Tourists visit the museum."},
-    {level:"A1-A2", word:"Experience", ipa:"/ɪkˈspɪəriəns/", pos:"noun/verb", meaning:"Kinh nghiệm, trải nghiệm",
-     ex1:"Traveling gives you valuable experience.",
-     ex2:"I want to experience new things."},
-    {level:"A1-A2", word:"Adventure", ipa:"/ədˈventʃə(r)/", pos:"noun", meaning:"Cuộc phiêu lưu",
-     ex1:"We had an adventure in the jungle.",
-     ex2:"Travel is full of adventures."},
-    {level:"A1-A2", word:"Culture", ipa:"/ˈkʌltʃə(r)/", pos:"noun", meaning:"Văn hóa",
-     ex1:"Learning about local culture is fun.",
-     ex2:"I love different cultures."},
-    {level:"A1-A2", word:"Destination", ipa:"/ˌdestɪˈneɪʃn/", pos:"noun", meaning:"Điểm đến",
-     ex1:"What is your favorite destination?",
-     ex2:"We reached our destination."},
-    {level:"B1", word:"Itinerary", ipa:"/aɪˈtɪnərəri/", pos:"noun", meaning:"Hành trình",
-     ex1:"We planned our itinerary carefully.",
-     ex2:"The itinerary includes many sights."},
-    {level:"B1", word:"Accommodation", ipa:"/əˌkɒməˈdeɪʃn/", pos:"noun", meaning:"Chỗ ở",
-     ex1:"We need to book accommodation in advance.",
-     ex2:"The accommodation is cheap."},
-
-    // ===== TECHNOLOGY (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Technology", ipa:"/tekˈnɒlədʒi/", pos:"noun", meaning:"Công nghệ",
-     ex1:"Technology changes our lives.",
-     ex2:"I love new technology."},
-    {level:"A1-A2", word:"Computer", ipa:"/kəmˈpjuːtə(r)/", pos:"noun", meaning:"Máy tính",
-     ex1:"I use a computer for work.",
-     ex2:"The computer is fast."},
-    {level:"A1-A2", word:"Internet", ipa:"/ˈɪntənet/", pos:"noun", meaning:"Internet",
-     ex1:"I use the internet every day.",
-     ex2:"The internet is useful."},
-    {level:"A1-A2", word:"Phone", ipa:"/fəʊn/", pos:"noun", meaning:"Điện thoại",
-     ex1:"I call my friends on my phone.",
-     ex2:"The phone is ringing."},
-    {level:"A1-A2", word:"Email", ipa:"/ˈiːmeɪl/", pos:"noun/verb", meaning:"Email, gửi email",
-     ex1:"I sent an email to my teacher.",
-     ex2:"Check your email."},
-    {level:"A1-A2", word:"Website", ipa:"/ˈwebsaɪt/", pos:"noun", meaning:"Trang web",
-     ex1:"I create a website.",
-     ex2:"The website is easy to use."},
-    {level:"A1-A2", word:"App", ipa:"/æp/", pos:"noun", meaning:"Ứng dụng",
-     ex1:"I download a new app.",
-     ex2:"This app is helpful."},
-    {level:"A1-A2", word:"Screen", ipa:"/skriːn/", pos:"noun", meaning:"Màn hình",
-     ex1:"The screen is cracked.",
-     ex2:"I look at the screen."},
-    {level:"A1-A2", word:"Keyboard", ipa:"/ˈkiːbɔːd/", pos:"noun", meaning:"Bàn phím",
-     ex1:"I type on the keyboard.",
-     ex2:"The keyboard is wireless."},
-    {level:"A1-A2", word:"Mouse", ipa:"/maʊs/", pos:"noun", meaning:"Chuột máy tính",
-     ex1:"I click with the mouse.",
-     ex2:"The mouse is not working."},
-    {level:"A1-A2", word:"Download", ipa:"/ˌdaʊnˈləʊd/", pos:"verb", meaning:"Tải xuống",
-     ex1:"I download music from the internet.",
-     ex2:"Downloading files is easy."},
-    {level:"A1-A2", word:"Upload", ipa:"/ʌpˈləʊd/", pos:"verb", meaning:"Tải lên",
-     ex1:"I upload my photos to the cloud.",
-     ex2:"You can upload videos."},
-    {level:"A1-A2", word:"Social media", ipa:"/ˈsəʊʃl ˈmiːdiə/", pos:"noun", meaning:"Mạng xã hội",
-     ex1:"I use social media to chat with friends.",
-     ex2:"Social media is popular."},
-    {level:"A1-A2", word:"Password", ipa:"/ˈpɑːswɜːd/", pos:"noun", meaning:"Mật khẩu",
-     ex1:"I need a password for my account.",
-     ex2:"Keep your password safe."},
-    {level:"A1-A2", word:"Click", ipa:"/klɪk/", pos:"verb", meaning:"Nhấp chuột",
-     ex1:"Click on the link.",
-     ex2:"I clicked the button."},
-    {level:"A1-A2", word:"Search", ipa:"/sɜːtʃ/", pos:"verb/noun", meaning:"Tìm kiếm",
-     ex1:"I search for information online.",
-     ex2:"The search results are useful."},
-    {level:"A1-A2", word:"Online", ipa:"/ˌɒnˈlaɪn/", pos:"adj/adv", meaning:"Trực tuyến",
-     ex1:"I buy things online.",
-     ex2:"We have online classes."},
-    {level:"A1-A2", word:"Device", ipa:"/dɪˈvaɪs/", pos:"noun", meaning:"Thiết bị",
-     ex1:"I have many electronic devices.",
-     ex2:"This device is expensive."},
-    {level:"A1-A2", word:"Memory", ipa:"/ˈmeməri/", pos:"noun", meaning:"Bộ nhớ",
-     ex1:"My phone has a large memory.",
-     ex2:"Memory cards are cheap."},
-    {level:"A1-A2", word:"Connect", ipa:"/kəˈnekt/", pos:"verb", meaning:"Kết nối",
-     ex1:"I connect to the WiFi.",
-     ex2:"The devices are connected."},
-    {level:"B1", word:"Innovation", ipa:"/ˌɪnəˈveɪʃn/", pos:"noun", meaning:"Đổi mới, sáng tạo",
-     ex1:"Innovation drives progress.",
-     ex2:"We need innovation in technology."},
-    {level:"B1", word:"Automation", ipa:"/ˌɔːtəˈmeɪʃn/", pos:"noun", meaning:"Tự động hóa",
-     ex1:"Automation helps reduce human effort.",
-     ex2:"Many jobs are replaced by automation."},
-
-    // ===== SPORTS (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Sport", ipa:"/spɔːt/", pos:"noun", meaning:"Thể thao",
-     ex1:"I like playing sports.",
-     ex2:"Football is a popular sport."},
-    {level:"A1-A2", word:"Football", ipa:"/ˈfʊtbɔːl/", pos:"noun", meaning:"Bóng đá",
-     ex1:"We play football in the park.",
-     ex2:"Football is exciting."},
-    {level:"A1-A2", word:"Basketball", ipa:"/ˈbɑːskɪtbɔːl/", pos:"noun", meaning:"Bóng rổ",
-     ex1:"Basketball is a fast game.",
-     ex2:"I love watching basketball."},
-    {level:"A1-A2", word:"Swimming", ipa:"/ˈswɪmɪŋ/", pos:"noun", meaning:"Bơi lội",
-     ex1:"Swimming is good for health.",
-     ex2:"I go swimming every day."},
-    {level:"A1-A2", word:"Runner", ipa:"/ˈrʌnə(r)/", pos:"noun", meaning:"Người chạy",
-     ex1:"She is a fast runner.",
-     ex2:"The runner won the race."},
-    {level:"A1-A2", word:"Race", ipa:"/reɪs/", pos:"noun", meaning:"Cuộc đua",
-     ex1:"I run a race.",
-     ex2:"The race is long."},
-    {level:"A1-A2", word:"Team", ipa:"/tiːm/", pos:"noun", meaning:"Đội",
-     ex1:"I am in a football team.",
-     ex2:"Our team won."},
-    {level:"A1-A2", word:"Coach", ipa:"/kəʊtʃ/", pos:"noun", meaning:"Huấn luyện viên",
-     ex1:"The coach is strict.",
-     ex2:"He is a good coach."},
-    {level:"A1-A2", word:"Exercise", ipa:"/ˈeksəsaɪz/", pos:"noun/verb", meaning:"Tập thể dục",
-     ex1:"I exercise every morning.",
-     ex2:"Exercise keeps you fit."},
-    {level:"A1-A2", word:"Healthy", ipa:"/ˈhelθi/", pos:"adj", meaning:"Khỏe mạnh",
-     ex1:"Sport helps us stay healthy.",
-     ex2:"Eat healthy food."},
-    {level:"A1-A2", word:"Ball", ipa:"/bɔːl/", pos:"noun", meaning:"Quả bóng",
-     ex1:"I throw the ball.",
-     ex2:"The ball is round."},
-    {level:"A1-A2", word:"Goal", ipa:"/ɡəʊl/", pos:"noun", meaning:"Bàn thắng, mục tiêu",
-     ex1:"He scored a goal.",
-     ex2:"My goal is to get fit."},
-    {level:"A1-A2", word:"Win", ipa:"/wɪn/", pos:"verb", meaning:"Chiến thắng",
-     ex1:"I want to win the game.",
-     ex2:"Our team wins."},
-    {level:"A1-A2", word:"Lose", ipa:"/luːz/", pos:"verb", meaning:"Thua",
-     ex1:"We lose the match.",
-     ex2:"He lost his keys."},
-    {level:"A1-A2", word:"Player", ipa:"/ˈpleɪə(r)/", pos:"noun", meaning:"Cầu thủ",
-     ex1:"He is a talented player.",
-     ex2:"Players train hard."},
-    {level:"A1-A2", word:"Match", ipa:"/mætʃ/", pos:"noun", meaning:"Trận đấu",
-     ex1:"The match starts at 3 p.m.",
-     ex2:"The match is exciting."},
-    {level:"A1-A2", word:"Stadium", ipa:"/ˈsteɪdiəm/", pos:"noun", meaning:"Sân vận động",
-     ex1:"The stadium is full of people.",
-     ex2:"I go to the stadium."},
-    {level:"A1-A2", word:"Score", ipa:"/skɔː(r)/", pos:"verb/noun", meaning:"Ghi điểm, tỉ số",
-     ex1:"We score a point.",
-     ex2:"The final score is 3-1."},
-    {level:"A1-A2", word:"Train", ipa:"/treɪn/", pos:"verb", meaning:"Tập luyện",
-     ex1:"I train every day.",
-     ex2:"She trains hard."},
-    {level:"A1-A2", word:"Champion", ipa:"/ˈtʃæmpiən/", pos:"noun", meaning:"Nhà vô địch",
-     ex1:"He is the champion.",
-     ex2:"The champion is strong."},
-    {level:"B1", word:"Competition", ipa:"/ˌkɒmpəˈtɪʃn/", pos:"noun", meaning:"Cuộc thi",
-     ex1:"We join a competition.",
-     ex2:"The competition is tough."},
-    {level:"B1", word:"Endurance", ipa:"/ɪnˈdjʊərəns/", pos:"noun", meaning:"Sự bền bỉ",
-     ex1:"Running requires endurance.",
-     ex2:"He has great endurance."},
-
-    // ===== ENTERTAINMENT (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Entertainment", ipa:"/ˌentəˈteɪnmənt/", pos:"noun", meaning:"Giải trí",
-     ex1:"I like entertainment like movies.",
-     ex2:"Music is a form of entertainment."},
-    {level:"A1-A2", word:"Movie", ipa:"/ˈmuːvi/", pos:"noun", meaning:"Phim ảnh",
-     ex1:"I watch a movie every weekend.",
-     ex2:"The movie is funny."},
-    {level:"A1-A2", word:"Music", ipa:"/ˈmjuːzɪk/", pos:"noun", meaning:"Âm nhạc",
-     ex1:"I love listening to music.",
-     ex2:"Music makes me happy."},
-    {level:"A1-A2", word:"Song", ipa:"/sɒŋ/", pos:"noun", meaning:"Bài hát",
-     ex1:"I sing a song.",
-     ex2:"This song is popular."},
-    {level:"A1-A2", word:"Dance", ipa:"/dɑːns/", pos:"verb/noun", meaning:"Nhảy múa",
-     ex1:"I like to dance.",
-     ex2:"She is a good dancer."},
-    {level:"A1-A2", word:"Game", ipa:"/ɡeɪm/", pos:"noun", meaning:"Trò chơi",
-     ex1:"We play a game.",
-     ex2:"Video games are fun."},
-    {level:"A1-A2", word:"Book", ipa:"/bʊk/", pos:"noun", meaning:"Sách",
-     ex1:"I read a book for fun.",
-     ex2:"This book is interesting."},
-    {level:"A1-A2", word:"Comedy", ipa:"/ˈkɒmədi/", pos:"noun", meaning:"Hài kịch, phim hài",
-     ex1:"I like comedy shows.",
-     ex2:"The movie is a comedy."},
-    {level:"A1-A2", word:"Concert", ipa:"/ˈkɒnsət/", pos:"noun", meaning:"Buổi hòa nhạc",
-     ex1:"I went to a concert last night.",
-     ex2:"The concert was amazing."},
-    {level:"A1-A2", word:"Artist", ipa:"/ˈɑːtɪst/", pos:"noun", meaning:"Nghệ sĩ",
-     ex1:"The artist painted a beautiful picture.",
-     ex2:"He is a famous artist."},
-    {level:"A1-A2", word:"Musician", ipa:"/mjuːˈzɪʃn/", pos:"noun", meaning:"Nhạc sĩ",
-     ex1:"She is a talented musician.",
-     ex2:"The musician plays the guitar."},
-    {level:"A1-A2", word:"Sing", ipa:"/sɪŋ/", pos:"verb", meaning:"Hát",
-     ex1:"I like to sing.",
-     ex2:"She sings beautifully."},
-    {level:"A1-A2", word:"Act", ipa:"/ækt/", pos:"verb", meaning:"Diễn xuất",
-     ex1:"He acts in a movie.",
-     ex2:"She acts very well."},
-    {level:"A1-A2", word:"Fun", ipa:"/fʌn/", pos:"noun", meaning:"Vui vẻ",
-     ex1:"The party is fun.",
-     ex2:"We have a lot of fun."},
-    {level:"A1-A2", word:"Hobby", ipa:"/ˈhɒbi/", pos:"noun", meaning:"Sở thích",
-     ex1:"My hobby is playing chess.",
-     ex2:"What is your hobby?"},
-    {level:"A1-A2", word:"Relax", ipa:"/rɪˈlæks/", pos:"verb", meaning:"Thư giãn",
-     ex1:"I relax by watching TV.",
-     ex2:"You need to relax."},
-    {level:"A1-A2", word:"Theatre", ipa:"/ˈθɪətə(r)/", pos:"noun", meaning:"Nhà hát",
-     ex1:"We go to the theatre to see plays.",
-     ex2:"The theatre is old."},
-    {level:"A1-A2", word:"Cinema", ipa:"/ˈsɪnəmə/", pos:"noun", meaning:"Rạp chiếu phim",
-     ex1:"I go to the cinema with my friends.",
-     ex2:"The cinema is crowded."},
-    {level:"A1-A2", word:"Show", ipa:"/ʃəʊ/", pos:"noun/verb", meaning:"Buổi biểu diễn, trình diễn",
-     ex1:"I watch a show on TV.",
-     ex2:"The show is interesting."},
-    {level:"A1-A2", word:"Listen", ipa:"/ˈlɪsn/", pos:"verb", meaning:"Lắng nghe",
-     ex1:"I listen to music every day.",
-     ex2:"Please listen to me."},
-    {level:"B1", word:"Audience", ipa:"/ˈɔːdiəns/", pos:"noun", meaning:"Khán giả",
-     ex1:"The audience applauded the performance.",
-     ex2:"The audience was quiet."},
-    {level:"B1", word:"Festival", ipa:"/ˈfestɪvl/", pos:"noun", meaning:"Lễ hội",
-     ex1:"I go to a music festival.",
-     ex2:"The festival lasts for 3 days."},
-
-    // ===== HEALTH (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Health", ipa:"/helθ/", pos:"noun", meaning:"Sức khỏe",
-     ex1:"Good health is important.",
-     ex2:"I take care of my health."},
-    {level:"A1-A2", word:"Doctor", ipa:"/ˈdɒktə(r)/", pos:"noun", meaning:"Bác sĩ",
-     ex1:"I go to the doctor when I am sick.",
-     ex2:"The doctor is kind."},
-    {level:"A1-A2", word:"Hospital", ipa:"/ˈhɒspɪtl/", pos:"noun", meaning:"Bệnh viện",
-     ex1:"He is in the hospital.",
-     ex2:"The hospital is big."},
-    {level:"A1-A2", word:"Medicine", ipa:"/ˈmedsn/", pos:"noun", meaning:"Thuốc",
-     ex1:"I take medicine when I have a cold.",
-     ex2:"The medicine is expensive."},
-    {level:"A1-A2", word:"Exercise", ipa:"/ˈeksəsaɪz/", pos:"noun/verb", meaning:"Tập thể dục",
-     ex1:"I exercise every morning.",
-     ex2:"Exercise is good for health."},
-    {level:"A1-A2", word:"Ill", ipa:"/ɪl/", pos:"adj", meaning:"Bị bệnh",
-     ex1:"She is ill and cannot come.",
-     ex2:"I feel ill."},
-    {level:"A1-A2", word:"Pain", ipa:"/peɪn/", pos:"noun", meaning:"Đau",
-     ex1:"I have a pain in my head.",
-     ex2:"The pain is bad."},
-    {level:"A1-A2", word:"Fever", ipa:"/ˈfiːvə(r)/", pos:"noun", meaning:"Sốt",
-     ex1:"I have a fever.",
-     ex2:"Check your temperature."},
-    {level:"A1-A2", word:"Cold", ipa:"/kəʊld/", pos:"adj/noun", meaning:"Lạnh, cảm lạnh",
-     ex1:"I catch a cold.",
-     ex2:"The water is cold."},
-    {level:"A1-A2", word:"Rest", ipa:"/rest/", pos:"noun/verb", meaning:"Nghỉ ngơi",
-     ex1:"You need to rest.",
-     ex2:"I rest after work."},
-    {level:"A1-A2", word:"Food", ipa:"/fuːd/", pos:"noun", meaning:"Thức ăn",
-     ex1:"Healthy food is important.",
-     ex2:"I eat a lot of vegetables."},
-    {level:"A1-A2", word:"Water", ipa:"/ˈwɔːtə(r)/", pos:"noun", meaning:"Nước",
-     ex1:"Drink plenty of water.",
-     ex2:"Water is essential."},
-    {level:"A1-A2", word:"Sleep", ipa:"/sliːp/", pos:"verb/noun", meaning:"Ngủ, giấc ngủ",
-     ex1:"I sleep 8 hours every night.",
-     ex2:"Sleep is important."},
-    {level:"A1-A2", word:"Stress", ipa:"/stres/", pos:"noun", meaning:"Căng thẳng",
-     ex1:"Work causes stress.",
-     ex2:"I feel stressed."},
-    {level:"A1-A2", word:"Relax", ipa:"/rɪˈlæks/", pos:"verb", meaning:"Thư giãn",
-     ex1:"I relax by reading.",
-     ex2:"Take time to relax."},
-    {level:"A1-A2", word:"Vitamin", ipa:"/ˈvɪtəmɪn/", pos:"noun", meaning:"Vitamin",
-     ex1:"Eat foods rich in vitamins.",
-     ex2:"Vitamin C is good for you."},
-    {level:"A1-A2", word:"Diet", ipa:"/ˈdaɪət/", pos:"noun", meaning:"Chế độ ăn",
-     ex1:"I follow a healthy diet.",
-     ex2:"A balanced diet is important."},
-    {level:"A1-A2", word:"Disease", ipa:"/dɪˈziːz/", pos:"noun", meaning:"Bệnh tật",
-     ex1:"Prevent disease by washing hands.",
-     ex2:"Heart disease is serious."},
-    {level:"A1-A2", word:"Cure", ipa:"/kjʊə(r)/", pos:"noun/verb", meaning:"Chữa bệnh",
-     ex1:"There is no cure for this disease.",
-     ex2:"The doctor can cure you."},
-    {level:"A1-A2", word:"Fit", ipa:"/fɪt/", pos:"adj", meaning:"Khỏe mạnh, vừa vặn",
-     ex1:"I am fit and healthy.",
-     ex2:"These shoes fit me."},
-    {level:"B1", word:"Hygiene", ipa:"/ˈhaɪdʒiːn/", pos:"noun", meaning:"Vệ sinh",
-     ex1:"Personal hygiene is important.",
-     ex2:"Poor hygiene causes illness."},
-    {level:"B1", word:"Mental health", ipa:"/ˈmentl helθ/", pos:"noun", meaning:"Sức khỏe tâm thần",
-     ex1:"Mental health is as important as physical health.",
-     ex2:"Take care of your mental health."},
-
-    // ===== FAMILY & SOCIETY (20 A1-A2, 2 B1) =====
-    {level:"A1-A2", word:"Family", ipa:"/ˈfæməli/", pos:"noun", meaning:"Gia đình",
-     ex1:"I have a big family.",
-     ex2:"My family loves me."},
-    {level:"A1-A2", word:"Mother", ipa:"/ˈmʌðə(r)/", pos:"noun", meaning:"Mẹ",
-     ex1:"My mother is kind.",
-     ex2:"I love my mother."},
-    {level:"A1-A2", word:"Father", ipa:"/ˈfɑːðə(r)/", pos:"noun", meaning:"Bố",
-     ex1:"My father is a teacher.",
-     ex2:"Father works hard."},
-    {level:"A1-A2", word:"Brother", ipa:"/ˈbrʌðə(r)/", pos:"noun", meaning:"Anh/em trai",
-     ex1:"I have one brother.",
-     ex2:"My brother is older than me."},
-    {level:"A1-A2", word:"Sister", ipa:"/ˈsɪstə(r)/", pos:"noun", meaning:"Chị/em gái",
-     ex1:"My sister is kind.",
-     ex2:"I have two sisters."},
-    {level:"A1-A2", word:"Parents", ipa:"/ˈpeərənts/", pos:"noun", meaning:"Bố mẹ",
-     ex1:"My parents are doctors.",
-     ex2:"I live with my parents."},
-    {level:"A1-A2", word:"Children", ipa:"/ˈtʃɪldrən/", pos:"noun", meaning:"Trẻ em",
-     ex1:"The children are playing.",
-     ex2:"I have two children."},
-    {level:"A1-A2", word:"Home", ipa:"/həʊm/", pos:"noun", meaning:"Nhà",
-     ex1:"I go home after school.",
-     ex2:"My home is in the city."},
-    {level:"A1-A2", word:"Friend", ipa:"/frend/", pos:"noun", meaning:"Bạn bè",
-     ex1:"My best friend is kind.",
-     ex2:"I have many friends."},
-    {level:"A1-A2", word:"Neighbor", ipa:"/ˈneɪbə(r)/", pos:"noun", meaning:"Hàng xóm",
-     ex1:"Our neighbor is friendly.",
-     ex2:"I know my neighbors."},
-    {level:"A1-A2", word:"Love", ipa:"/lʌv/", pos:"verb/noun", meaning:"Yêu, tình yêu",
-     ex1:"I love my family.",
-     ex2:"Love is important."},
-    {level:"A1-A2", word:"Care", ipa:"/keə(r)/", pos:"verb/noun", meaning:"Quan tâm, chăm sóc",
-     ex1:"I care about my friends.",
-     ex2:"Take care of yourself."},
-    {level:"A1-A2", word:"Respect", ipa:"/rɪˈspekt/", pos:"verb/noun", meaning:"Tôn trọng",
-     ex1:"We should respect each other.",
-     ex2:"Respect your elders."},
-    {level:"A1-A2", word:"Support", ipa:"/səˈpɔːt/", pos:"verb/noun", meaning:"Hỗ trợ",
-     ex1:"I support my family.",
-     ex2:"Thank you for your support."},
-    {level:"A1-A2", word:"Community", ipa:"/kəˈmjuːnəti/", pos:"noun", meaning:"Cộng đồng",
-     ex1:"Our community is strong.",
-     ex2:"I help my community."},
-    {level:"A1-A2", word:"Society", ipa:"/səˈsaɪəti/", pos:"noun", meaning:"Xã hội",
-     ex1:"Society should be fair.",
-     ex2:"We live in a society."},
-    {level:"A1-A2", word:"Tradition", ipa:"/trəˈdɪʃn/", pos:"noun", meaning:"Truyền thống",
-     ex1:"Tradition is important.",
-     ex2:"I follow family traditions."},
-    {level:"A1-A2", word:"Culture", ipa:"/ˈkʌltʃə(r)/", pos:"noun", meaning:"Văn hóa",
-     ex1:"Culture shapes our identity.",
-     ex2:"I love my culture."},
-    {level:"A1-A2", word:"Generation", ipa:"/ˌdʒenəˈreɪʃn/", pos:"noun", meaning:"Thế hệ",
-     ex1:"The younger generation is different.",
-     ex2:"Old traditions are passed down generations."},
-    {level:"A1-A2", word:"Live", ipa:"/lɪv/", pos:"verb", meaning:"Sống",
-     ex1:"I live in Hanoi.",
-     ex2:"We live together."},
-    {level:"B1", word:"Domestic", ipa:"/dəˈmestɪk/", pos:"adj", meaning:"Trong nước, gia đình",
-     ex1:"Domestic issues are important.",
-     ex2:"She is a domestic worker."},
-    {level:"B1", word:"Socialize", ipa:"/ˈsəʊʃəlaɪz/", pos:"verb", meaning:"Giao tiếp xã hội",
-     ex1:"I socialize with my friends.",
-     ex2:"It's good to socialize."}
+{level:"A1-A2", word:"Tradition", ipa:"/trəˈdɪʃn/", pos:"noun", meaning:"Truyền thống",
+ ex1:"It is a tradition to eat mooncakes during the Mid-Autumn Festival.",
+ ex2:"Our family has a strong tradition of gathering every Sunday."},
+{level:"A1-A2", word:"Custom", ipa:"/ˈkʌstəm/", pos:"noun", meaning:"Tập quán, phong tục",
+ ex1:"Giving red envelopes at Tet is a popular custom in Vietnam.",
+ ex2:"You should learn about local customs before traveling abroad."},
+{level:"A1-A2", word:"Festival", ipa:"/ˈfestɪvl/", pos:"noun", meaning:"Lễ hội",
+ ex1:"The lantern festival attracts thousands of visitors every year.",
+ ex2:"Spring is the season of many traditional festivals."},
+{level:"A1-A2", word:"Celebrate", ipa:"/ˈselɪbreɪt/", pos:"verb", meaning:"Kỷ niệm, ăn mừng",
+ ex1:"We celebrate New Year's Eve with fireworks and music.",
+ ex2:"How do people in your country celebrate birthdays?"},
+{level:"A1-A2", word:"Culture", ipa:"/ˈkʌltʃə(r)/", pos:"noun", meaning:"Văn hóa",
+ ex1:"Food is an important part of national culture.",
+ ex2:"Learning a language helps you understand its culture."},
+{level:"A1-A2", word:"Gift", ipa:"/ɡɪft/", pos:"noun", meaning:"Quà tặng",
+ ex1:"Exchanging gifts is common during Christmas.",
+ ex2:"She brought a small gift for the host of the party."},
+{level:"A1-A2", word:"Special", ipa:"/ˈspeʃl/", pos:"adj", meaning:"Đặc biệt",
+ ex1:"We cook special dishes only on holidays.",
+ ex2:"Tet is a special time for family reunions."},
+{level:"A1-A2", word:"Family", ipa:"/ˈfæməli/", pos:"noun", meaning:"Gia đình",
+ ex1:"Traditional holidays are meant to be spent with family.",
+ ex2:"All family members gather around the dinner table."},
+{level:"A1-A2", word:"Clothes", ipa:"/kləʊðz/", pos:"noun", meaning:"Quần áo, trang phục",
+ ex1:"People often wear traditional clothes during weddings.",
+ ex2:"She bought new clothes for the festival."},
+{level:"A1-A2", word:"Food", ipa:"/fuːd/", pos:"noun", meaning:"Thức ăn",
+ ex1:"Sticky rice is a traditional food in Southeast Asia.",
+ ex2:"Street food reflects the local culture well."},
+{level:"A1-A2", word:"Holiday", ipa:"/ˈhɒlədeɪ/", pos:"noun", meaning:"Ngày lễ, kỳ nghỉ",
+ ex1:"Tet is the biggest public holiday in Vietnam.",
+ ex2:"Many shops close during the national holiday."},
+{level:"A1-A2", word:"Gather", ipa:"/ˈɡæðə(r)/", pos:"verb", meaning:"Tụ họp, quây quần",
+ ex1:"Relatives gather at my grandparents' house every spring.",
+ ex2:"People gathered in the square to watch the parade."},
+{level:"A1-A2", word:"History", ipa:"/ˈhɪstri/", pos:"noun", meaning:"Lịch sử",
+ ex1:"This traditional festival has a long history.",
+ ex2:"The museum displays objects related to local history."},
+{level:"A1-A2", word:"Music", ipa:"/ˈmjuːzɪk/", pos:"noun", meaning:"Âm nhạc",
+ ex1:"Folk music is played at the traditional village fair.",
+ ex2:"They danced to traditional music all night."},
+{level:"A1-A2", word:"Dance", ipa:"/dɑːns/", pos:"noun/verb", meaning:"Điệu nhảy, nhảy múa",
+ ex1:"The lion dance is performed to bring good luck.",
+ ex2:"Children love to dance during the festival."},
+{level:"A1-A2", word:"Costume", ipa:"/ˈkɒstjuːm/", pos:"noun", meaning:"Trang phục truyền thống/hóa trang",
+ ex1:"The Ao Dai is the national costume of Vietnam.",
+ ex2:"Dancers wore colorful traditional costumes."},
+{level:"A1-A2", word:"Symbol", ipa:"/ˈsɪmbl/", pos:"noun", meaning:"Biểu tượng",
+ ex1:"Peach blossoms are a symbol of spring in the North.",
+ ex2:"The red dragon is a symbol of strength in eastern culture."},
+{level:"A1-A2", word:"Generation", ipa:"/ˌdʒenəˈreɪʃn/", pos:"noun", meaning:"Thế hệ",
+ ex1:"This recipe has been passed down through generations.",
+ ex2:"Older generations value traditional customs very much."},
+{level:"A1-A2", word:"Respect", ipa:"/rɪˈspekt/", pos:"verb/noun", meaning:"Tôn trọng, sự kính trọng",
+ ex1:"Children are taught to respect their elders.",
+ ex2:"Showing respect to ancestors is a key tradition."},
+{level:"A1-A2", word:"Belief", ipa:"/bɪˈliːf/", pos:"noun", meaning:"Niềm tin, tín ngưỡng",
+ ex1:"It is a traditional belief that red brings good fortune.",
+ ex2:"These rituals are based on ancient beliefs."},
+{level:"A1-A2", word:"Ritual", ipa:"/ˈrɪtʃuəl/", pos:"noun", meaning:"Nghi lễ",
+ ex1:"The tea ceremony is a traditional ritual in Japan.",
+ ex2:"Lighting candles is part of the religious ritual."},
+{level:"A1-A2", word:"Pass down", ipa:"/pɑːs daʊn/", pos:"phrasal verb", meaning:"Truyền lại (cho thế hệ sau)",
+ ex1:"Grandmothers pass down folk tales to their grandchildren.",
+ ex2:"These craft skills were passed down from father to son."},
+{level:"A1-A2", word:"Prepare", ipa:"/prɪˈpeər/", pos:"verb", meaning:"Chuẩn bị",
+ ex1:"Families spend days preparing for the New Year.",
+ ex2:"They prepare traditional sweets for guests."},
+{level:"B1", word:"Heritage", ipa:"/ˈherɪtɪdʒ/", pos:"noun", meaning:"Di sản",
+ ex1:"Quan Ho singing is recognized as a cultural heritage.",
+ ex2:"We must protect our historical buildings and cultural heritage."},
+{level:"B1", word:"Preserve", ipa:"/prɪˈzɜːv/", pos:"verb", meaning:"Bảo tồn, giữ gìn",
+ ex1:"The local community works hard to preserve old traditions.",
+ ex2:"Museums help preserve historical artifacts for the future."},
+{level:"B1", word:"Ancestor", ipa:"/ˈænsestə(r)/", pos:"noun", meaning:"Tổ tiên",
+ ex1:"People burn incense to pay respect to their ancestors.",
+ ex2:"Our ancestors built this village hundreds of years ago."},
+{level:"B1", word:"Identity", ipa:"/aɪˈdentəti/", pos:"noun", meaning:"Bản sắc, danh tính",
+ ex1:"Traditional arts help maintain a country's cultural identity.",
+ ex2:"Wearing traditional attire gives people a sense of national identity."},
+{level:"B1", word:"Hospitality", ipa:"/ˌhɒspɪˈtæləti/", pos:"noun", meaning:"Lòng hiếu khách",
+ ex1:"Local people are famous for their warm hospitality.",
+ ex2:"Offering tea to visitors is a traditional sign of hospitality."},
+{level:"B1", word:"Value", ipa:"/ˈvæljuː/", pos:"noun/verb", meaning:"Giá trị, coi trọng",
+ ex1:"Many Asian cultures value family togetherness.",
+ ex2:"Traditional moral values are still taught in schools."},
+{level:"B1", word:"Origin", ipa:"/ˈɒrɪdʒɪn/", pos:"noun", meaning:"Nguồn gốc, xuất xứ",
+ ex1:"The origin of this festival dates back to the 15th century.",
+ ex2:"Scholars are studying the origins of these traditional dances."}
 ];
 
-/* ================================================================
-   CẤU HÌNH CHỦ ĐỀ
-   ================================================================ */
 const TOPICS = [
     { id: "tradition", icon: "🏮", name: "Tradition", sub: "Truyền thống & lễ hội", active: true },
-    { id: "environment", icon: "🌱", name: "Environment", sub: "Môi trường", active: true },
-    { id: "food", icon: "🍜", name: "Food & Drink", sub: "Ẩm thực", active: true },
-    { id: "school", icon: "🏫", name: "School Life", sub: "Trường học", active: true },
-    { id: "travel", icon: "✈️", name: "Travel", sub: "Du lịch", active: true },
-    { id: "technology", icon: "💻", name: "Technology", sub: "Công nghệ", active: true },
-    { id: "sports", icon: "⚽", name: "Sports", sub: "Thể thao", active: true },
-    { id: "entertainment", icon: "🎬", name: "Entertainment", sub: "Giải trí", active: true },
-    { id: "health", icon: "🏥", name: "Health", sub: "Sức khoẻ", active: true },
-    { id: "family", icon: "👨‍👩‍👧", name: "Family & Society", sub: "Gia đình & xã hội", active: true }
+    { id: "environment", icon: "🌱", name: "Environment", sub: "Môi trường", active: false },
+    { id: "food", icon: "🍜", name: "Food & Drink", sub: "Ẩm thực", active: false },
+    { id: "school", icon: "🏫", name: "School Life", sub: "Trường học", active: false },
+    { id: "travel", icon: "✈️", name: "Travel", sub: "Du lịch", active: false },
+    { id: "technology", icon: "💻", name: "Technology", sub: "Công nghệ", active: false },
+    { id: "sports", icon: "⚽", name: "Sports", sub: "Thể thao", active: false },
+    { id: "entertainment", icon: "🎬", name: "Entertainment", sub: "Giải trí", active: false },
+    { id: "health", icon: "🏥", name: "Health", sub: "Sức khoẻ", active: false },
+    { id: "family", icon: "👨‍👩‍👧", name: "Family & Society", sub: "Gia đình & xã hội", active: false }
 ];
 
-/* ================================================================
-   THEME ENGINE & BACKGROUND (giữ nguyên)
-   ================================================================ */
-const THEMES = [
-    { id: 'spring', label: '🌸 Spring', colors: ['#fce4ec','#f3d9e8','#fbe9e7'], accent: '#e8436e' },
-    { id: 'ocean', label: '🌊 Ocean', colors: ['#d4eaf7','#b8dae6','#c5e8f0'], accent: '#0f9b8c' },
-    { id: 'midnight', label: '🌙 Midnight', colors: ['#1a1a2e','#16213e','#0f3460'], accent: '#a29bfe' },
-    { id: 'forest', label: '🍃 Forest', colors: ['#e8f0e3','#d4e0cc','#dce8d4'], accent: '#2d7d4f' }
-];
-let currentThemeIdx = 1;
+/* ================= STATE ================= */
+let currentLevel = "all";
+let fcList = [...VOCAB];
+let fcIndex = 0;
+let quizList = [];
+let quizIndex = 0;
+let quizScore = 0;
+const QUIZ_LEN = 10;
 
-function applyTheme(idx) {
-    const t = THEMES[idx];
-    document.body.className = 'theme-' + t.id;
-    document.getElementById('themeDot').style.background = 'linear-gradient(135deg,' + t.colors[1] + ',' + t.accent + ')';
-    document.getElementById('themeLabel').textContent = t.label;
-    currentThemeIdx = idx;
-    if (window._particles) {
-        window._particles.colors = [
-            t.colors[0], t.colors[1], t.colors[2],
-            t.accent, t.accent + 'aa'
-        ];
-    }
-}
-document.getElementById('themeToggle').addEventListener('click', () => {
-    const next = (currentThemeIdx + 1) % THEMES.length;
-    applyTheme(next);
-    showToast('🎨 Đã chuyển sang ' + THEMES[next].label);
-});
-
-// Canvas background
-(function initBg() {
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
-    const colors = ['#d4eaf7','#b8dae6','#c5e8f0','#0f9b8c','#0f9b8caa'];
-    let mouse = { x: 0, y: 0 };
-
-    function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        initParticles();
-    }
-    function initParticles() {
-        const count = Math.min(80, Math.floor((W * H) / 18000));
-        particles = [];
-        for (let i = 0; i < count; i++) {
-            particles.push({
-                x: Math.random() * W,
-                y: Math.random() * H,
-                r: 2 + Math.random() * 4,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5 - 0.15,
-                a: 0.15 + Math.random() * 0.35,
-                color: colors[Math.floor(Math.random() * colors.length)]
-            });
-        }
-        window._particles = { colors: colors };
-    }
-    function draw() {
-        ctx.clearRect(0, 0, W, H);
-        ctx.beginPath();
-        ctx.moveTo(0, H * 0.85);
-        for (let x = 0; x <= W; x += 2) {
-            const y = H * 0.85 + Math.sin(x * 0.008 + Date.now() * 0.0006) * 18
-                + Math.sin(x * 0.015 + Date.now() * 0.0004 + 1.2) * 10
-                + Math.sin(x * 0.003 + Date.now() * 0.0003 + 0.7) * 14;
-            ctx.lineTo(x, y);
-        }
-        ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
-        ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
-
-        ctx.beginPath();
-        ctx.moveTo(0, H * 0.78);
-        for (let x = 0; x <= W; x += 2) {
-            const y = H * 0.78 + Math.sin(x * 0.006 + Date.now() * 0.0005 + 0.5) * 24
-                + Math.sin(x * 0.012 + Date.now() * 0.0007 + 2.1) * 12;
-            ctx.lineTo(x, y);
-        }
-        ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
-        ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill();
-
-        for (const p of particles) {
-            p.x += p.vx + (mouse.x - W/2) * 0.00006;
-            p.y += p.vy;
-            if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
-            if (p.x < -10) p.x = W + 10;
-            if (p.x > W + 10) p.x = -10;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = p.a * (0.7 + 0.3 * Math.sin(Date.now() * 0.001 + p.x));
-            ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        const grd = ctx.createRadialGradient(W*0.2, H*0.15, 0, W*0.2, H*0.15, W*0.5);
-        grd.addColorStop(0, 'rgba(255,255,255,0.04)');
-        grd.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, W, H);
-        requestAnimationFrame(draw);
-    }
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    resize();
-    draw();
-})();
-
-/* ================================================================
-   APP LOGIC (giữ nguyên, chỉ bổ sung hàm đếm từ cho filters)
-   ================================================================ */
-const viewHome = document.getElementById('view-home');
-const viewTopic = document.getElementById('view-topic');
-const backBtn = document.getElementById('backBtn');
+/* ================= HOME / TOPIC GRID ================= */
 const topicGrid = document.getElementById('topicGrid');
-const toast = document.getElementById('toast');
-
-// Render topic cards
 TOPICS.forEach(t => {
     const el = document.createElement('div');
     el.className = 'topic-card ' + (t.active ? 'active' : 'locked');
-    const wordCount = VOCAB.filter(w => w.topic === t.id).length;
     el.innerHTML = `
-        ${t.active ? '<span class="badge-live">' + wordCount + ' từ</span>' : '<span class="badge-soon">Sắp ra mắt</span>'}
+        ${t.active ? '<span class="badge-live">Đang mở</span>' : '<span class="badge-soon">Sắp ra mắt</span>'}
         <div class="emoji">${t.icon}</div>
         <h3>${t.name}</h3>
         <p class="sub">${t.sub}</p>
     `;
     el.addEventListener('click', () => {
-        if (t.active) openTopic(t.id);
-        else showToast('Chủ đề "' + t.name + '" sắp ra mắt 🚧');
+        if (t.active) {
+            openTopic();
+        } else {
+            showToast('Chủ đề "' + t.name + '" sắp ra mắt 🚧');
+        }
     });
     topicGrid.appendChild(el);
 });
 
-let currentTopicId = 'tradition';
-let fcList = [];
-let fcIndex = 0;
-let currentLevel = 'all';
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
 
-function openTopic(topicId) {
-    currentTopicId = topicId;
-    const topic = TOPICS.find(t => t.id === topicId);
-    document.getElementById('topicEmoji').textContent = topic.icon;
-    document.getElementById('topicName').textContent = topic.name;
-    document.getElementById('topicDesc').textContent = topic.sub + ' — ' + VOCAB.filter(w => w.topic === topicId).length + ' từ vựng';
+const viewHome = document.getElementById('view-home');
+const viewTopic = document.getElementById('view-topic');
+const backBtn = document.getElementById('backBtn');
 
+function openTopic() {
     viewHome.classList.remove('active');
     viewTopic.classList.add('active');
     backBtn.style.display = 'inline-flex';
-
-    // Tạo level filters dựa trên dữ liệu
-    const words = VOCAB.filter(w => w.topic === topicId);
-    const allCount = words.length;
-    const a1a2 = words.filter(w => w.level === 'A1-A2').length;
-    const b1 = words.filter(w => w.level === 'B1').length;
-
-    const filterContainer = document.getElementById('levelFilters');
-    filterContainer.innerHTML = `
-        <button class="level-chip active" data-level="all">Tất cả (${allCount})</button>
-        <button class="level-chip" data-level="A1-A2">A1–A2 (${a1a2})</button>
-        <button class="level-chip" data-level="B1">B1 (${b1})</button>
-    `;
-    document.querySelectorAll('.level-chip').forEach(chip => {
-        chip.addEventListener('click', () => applyLevelFilter(chip.dataset.level));
-    });
-
     applyLevelFilter('all');
     switchMode('flashcard');
 }
-
 backBtn.addEventListener('click', () => {
     viewTopic.classList.remove('active');
     viewHome.classList.add('active');
     backBtn.style.display = 'none';
 });
 
+/* ================= LEVEL FILTER ================= */
+document.querySelectorAll('.level-chip').forEach(chip => {
+    chip.addEventListener('click', () => applyLevelFilter(chip.dataset.level));
+});
 function applyLevelFilter(level) {
     currentLevel = level;
     document.querySelectorAll('.level-chip').forEach(c => c.classList.toggle('active', c.dataset.level === level));
-    const words = VOCAB.filter(w => w.topic === currentTopicId);
-    fcList = level === 'all' ? words : words.filter(w => w.level === level);
+    fcList = level === 'all' ? [...VOCAB] : VOCAB.filter(v => v.level === level);
     fcIndex = 0;
     renderCard();
     buildQuiz();
 }
 
-// Mode switch
+/* ================= MODE SWITCH ================= */
 document.querySelectorAll('.mode-tab').forEach(tab => {
     tab.addEventListener('click', () => switchMode(tab.dataset.mode));
 });
@@ -1453,12 +571,13 @@ function switchMode(mode) {
     if (mode === 'quiz') buildQuiz();
 }
 
-// Flashcard
+/* ================= FLASHCARD ================= */
 const flipCard = document.getElementById('flipCard');
+const flipInner = flipCard.querySelector('.flip-inner');
 const cardWord = document.getElementById('cardWord');
 const cardIpa = document.getElementById('cardIpa');
 const cardPos = document.getElementById('cardPos');
-const cardMeaningBack = document.getElementById('cardMeaningBack');
+const cardMeaning = document.getElementById('cardMeaning');
 const cardEx1 = document.getElementById('cardEx1');
 const cardEx2 = document.getElementById('cardEx2');
 const fcProgress = document.getElementById('fcProgress');
@@ -1467,16 +586,27 @@ function renderCard() {
     if (fcList.length === 0) return;
     const item = fcList[fcIndex];
     flipCard.classList.remove('flipped');
+
+    // update content
     cardWord.textContent = item.word;
     cardIpa.textContent = item.ipa;
     cardPos.textContent = item.pos;
-    cardMeaningBack.textContent = item.meaning;
+    cardMeaning.textContent = item.meaning;
     cardEx1.innerHTML = '<b>Ex1:</b> ' + item.ex1;
     cardEx2.innerHTML = '<b>Ex2:</b> ' + item.ex2;
     fcProgress.textContent = (fcIndex + 1) + ' / ' + fcList.length;
     document.getElementById('prevBtn').disabled = fcIndex === 0;
     document.getElementById('nextBtn').disabled = fcIndex === fcList.length - 1;
+
+    // subtle pop animation on text so changes feel smoother
+    [cardWord, cardMeaning].forEach(el => {
+        el.classList.remove('pop');
+        // force reflow
+        void el.offsetWidth;
+        el.classList.add('pop');
+    });
 }
+
 flipCard.addEventListener('click', () => flipCard.classList.toggle('flipped'));
 document.getElementById('prevBtn').addEventListener('click', () => { if (fcIndex > 0) { fcIndex--; renderCard(); } });
 document.getElementById('nextBtn').addEventListener('click', () => { if (fcIndex < fcList.length - 1) { fcIndex++; renderCard(); } });
@@ -1487,10 +617,9 @@ document.getElementById('shuffleBtn').addEventListener('click', () => {
     }
     fcIndex = 0;
     renderCard();
-    showToast('Đã xáo trộn thẻ 🔀');
+    showToast('Đã xáo trộn thứ tự thẻ 🔀');
 });
 document.getElementById('speakBtn').addEventListener('click', (e) => { e.stopPropagation(); speak(fcList[fcIndex].word); });
-document.getElementById('quizSpeakBtn').addEventListener('click', () => speak(quizList[quizIndex]?.word || ''));
 
 function speak(text) {
     if (!('speechSynthesis' in window)) { showToast('Trình duyệt không hỗ trợ phát âm 😢'); return; }
@@ -1501,18 +630,7 @@ function speak(text) {
     speechSynthesis.speak(u);
 }
 
-function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-}
-
-// Quiz
-let quizList = [];
-let quizIndex = 0;
-let quizScore = 0;
-const QUIZ_LEN = 10;
+/* ================= QUIZ ================= */
 const quizWord = document.getElementById('quizWord');
 const quizOptions = document.getElementById('quizOptions');
 const quizCounter = document.getElementById('quizCounter');
@@ -1523,7 +641,7 @@ const quizPlay = document.getElementById('quizPlay');
 const quizResult = document.getElementById('quizResult');
 
 function buildQuiz() {
-    const pool = fcList.length >= 4 ? fcList : VOCAB.filter(w => w.topic === currentTopicId);
+    const pool = fcList.length >= 4 ? fcList : VOCAB;
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
     quizList = shuffled.slice(0, Math.min(QUIZ_LEN, shuffled.length));
     quizIndex = 0;
@@ -1541,7 +659,7 @@ function renderQuizQuestion() {
     quizScoreEl.textContent = 'Điểm: ' + quizScore;
     quizProgressFill.style.width = ((quizIndex) / quizList.length * 100) + '%';
 
-    const wrongPool = VOCAB.filter(v => v.word !== item.word && v.topic === currentTopicId).sort(() => Math.random() - 0.5).slice(0, 3);
+    const wrongPool = VOCAB.filter(v => v.word !== item.word).sort(() => Math.random() - 0.5).slice(0, 3);
     const options = [...wrongPool.map(w => w.meaning), item.meaning].sort(() => Math.random() - 0.5);
 
     quizOptions.innerHTML = '';
@@ -1559,8 +677,11 @@ function selectAnswer(btn, chosen, correct) {
         o.disabled = true;
         if (o.textContent === correct) o.classList.add('correct');
     });
-    if (chosen === correct) quizScore++;
-    else btn.classList.add('wrong');
+    if (chosen === correct) {
+        quizScore++;
+    } else {
+        btn.classList.add('wrong');
+    }
     quizScoreEl.textContent = 'Điểm: ' + quizScore;
     quizProgressFill.style.width = ((quizIndex + 1) / quizList.length * 100) + '%';
     quizNextBtn.style.display = 'inline-block';
@@ -1569,8 +690,11 @@ function selectAnswer(btn, chosen, correct) {
 
 quizNextBtn.addEventListener('click', () => {
     quizIndex++;
-    if (quizIndex >= quizList.length) showQuizResult();
-    else renderQuizQuestion();
+    if (quizIndex >= quizList.length) {
+        showQuizResult();
+    } else {
+        renderQuizQuestion();
+    }
 });
 
 function showQuizResult() {
@@ -1586,9 +710,10 @@ function showQuizResult() {
 }
 
 document.getElementById('restartBtn').addEventListener('click', buildQuiz);
+document.getElementById('quizSpeakBtn').addEventListener('click', () => speak(quizList[quizIndex].word));
 
-// INIT: mở chủ đề Tradition mặc định
-openTopic('tradition');
+/* ================= INIT ================= */
+renderCard();
 </script>
 </body>
 </html>
